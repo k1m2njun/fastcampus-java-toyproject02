@@ -19,6 +19,7 @@ CREATE TABLE player (
     position VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     FOREIGN KEY (team_id) REFERENCES team(id)
+
 );
 
 CREATE TABLE out_player (

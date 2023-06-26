@@ -1,14 +1,19 @@
 package model.team;
 
-import java.sql.Timestamp;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
+import java.sql.Timestamp;
+@ToString
+@Getter
 public class Team {
 
     private Integer id;
     private Integer stadiumId;
     private String name;
     private Timestamp createdAt;
-
+    @Builder
     public Team (
             Integer id,
             Integer stadiumId,
