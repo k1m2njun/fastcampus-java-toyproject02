@@ -1,5 +1,4 @@
 import db.DBConnection;
-import model.player.Player;
 import model.player.PlayerDao;
 
 import java.sql.Connection;
@@ -9,21 +8,13 @@ public class BaseBallApplication {
 
     public static void main(String[] args) {
         Connection connection = DBConnection.getInstance();
-
-        PlayerDao playerDao = PlayerDao.getInstance();
-
-        playerDao.connectDB(connection);
+        PlayerDao playerDao = new PlayerDao(connection);
 
         try {
-//            playerDao.createPlayerTable();
-//            for(Player p : playerDao.getPlayersByTeam(2)) {
-//                System.out.println(p.toString());
-//            }
-            System.out.println(playerDao.getPlayerByPosition("1루수", 2).toString());
+            playerDao.createPlayerTable();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 }
