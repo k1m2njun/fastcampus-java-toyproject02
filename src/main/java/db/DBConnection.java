@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 public class DBConnection {
     public static Connection getInstance(){
         // MySQL 연결 정보
-        String url = "jdbc:mysql://localhost:8080/baseball";
+        String url = "jdbc:mysql://localhost:3306/baseball";
         String username = "root";
         String password = "root1234";
 

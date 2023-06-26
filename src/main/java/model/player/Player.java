@@ -1,7 +1,13 @@
 package model.player;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.sql.Timestamp;
 
+@Getter
+@ToString
 public class Player {
     private Integer id;
     private Integer teamId;
@@ -9,6 +15,7 @@ public class Player {
     private String position;
     private Timestamp createdAt;
 
+    @Builder
     public Player(
             Integer id,
             Integer teamId,
