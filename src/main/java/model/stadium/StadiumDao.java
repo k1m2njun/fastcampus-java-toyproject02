@@ -3,6 +3,7 @@ package model.stadium;
 import lombok.Getter;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,7 +32,36 @@ public class StadiumDao {
     }
 
     public List<Stadium> getAllStadium()throws SQLException{
+        //0. collection
+        List<Stadium>  stadiumList = new ArrayList<>();
+        //1. sql
+        String query = "select * from stadium";
+        try{
+            //2. buffer
+            PreparedStatement statement = connection.prepareStatement(query);
 
+            //3. send
+            ResultSet rs = statement.executeQuery();// object type으로 리턴
+            //4. cursor while
+            while(rs.next()){
+                //5. mapping (db result -> model)
+                Stadium stadium = new Stadium(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getTimestamp("created_at")
+                );
+                // 6. collect
+                stadiumList.add(stadium);
+            }
+
+            return stadiumList;
+
+        }catch (SQLException e){
+            System.out.println("전체 경기장 리스트 조회중 에러발생 : "+ e.getMessage());
+            System.out.println("에러추적");
+            e.printStackTrace();
+        }
+        return stadiumList;
     }
 
     public Stadium getStadiumByName(String stadiumName){
@@ -59,10 +89,10 @@ public class StadiumDao {
         return null;// stadium not found
     }
 
-    private Stadium buildStadiumFromResultSet(ResultSet resultSet) throws SQLException{
-        int stadiumId = resultSet.getInt("id");// 경기장 id
-        String stadiumName = resultSet.getString("name");// 경기장 이름
-        Timestamp stadiumTimestamp = resultSet.getTimestamp("created_at");// 경기장 등록 시간
+    private Stadium buildStadiumFromResultSet(ResultSet rs) throws SQLException{
+        int stadiumId = rs.getInt("id");// 경기장 id
+        String stadiumName = rs.getString("name");// 경기장 이름
+        Timestamp stadiumTimestamp = rs.getTimestamp("created_at");// 경기장 등록 시간
 
         return Stadium.builder()
                 .id(stadiumId)
