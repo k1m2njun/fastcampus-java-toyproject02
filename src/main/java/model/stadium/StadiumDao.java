@@ -11,26 +11,25 @@ public class StadiumDao {
 
     private Connection connection;
 
-    private StadiumDao(Connection connection) {
+    public StadiumDao(Connection connection) {
         this.connection = connection;
     }
 
     // insert method
-    public Stadium createStadium(String stadiumName) throws SQLException {
-        String query = "INSERT INTO stadium(name, created_at) values(?, now());";
+    public Stadium createStadium(String stadiumName) {
+        String query = "INSERT INTO stadium(name, created_at) VALUES(?, now())";
 
-        if (getStadiumByName(stadiumName)!=null){// 중복된 경기장이 아니면 insert
+
+        if (getStadiumByName(stadiumName)==null){// 없는 경기장이면 null 반환, -> 중복된 경기장이 아니면 insert
             try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, stadiumName);
                 int rowCount = ps.executeUpdate();
                 if (rowCount > 0) {
-                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                    return getStadiumByName(stadiumName);
                 }
             } catch (SQLException e) {
-                connection.rollback();
+                //connection.rollback();
                 System.out.println("경기장 등록과정에서 Exception 발생 : " + e.getMessage());
-            } finally {
-                connection.setAutoCommit(true);
             }
         }
         return null;// 계좌 입력 실패
@@ -40,7 +39,7 @@ public class StadiumDao {
         //0. collection
         List<Stadium> stadiumList = new ArrayList<>();
         //1. sql
-        String query = "select * from stadium";
+        String query = "SELECT * FROM stadium";
         try (PreparedStatement ps = connection.prepareStatement(query)){ //2. buffer
 
             try(ResultSet rs = ps.executeQuery()){//3. send , object type으로 리턴
@@ -67,7 +66,7 @@ public class StadiumDao {
 
     public Stadium getStadiumByName(String stadiumName) {
         //1.sql
-        String query = "select * from stadium where name = ?";
+        String query = "SELECT * FROM stadium where name = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
             ps.setString(1, stadiumName);
