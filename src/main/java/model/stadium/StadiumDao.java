@@ -19,19 +19,21 @@ public class StadiumDao {
     public Stadium createStadium(String stadiumName) throws SQLException {
         String query = "INSERT INTO stadium(name, created_at) values(?, now());";
 
-        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, stadiumName);
-            int rowCount = statement.executeUpdate();
-            if (rowCount > 0) {
-                ResultSet generatedKeys = statement.getGeneratedKeys();
+        if (getStadiumByName(stadiumName)!=null){// 중복된 경기장이 아니면 insert
+            try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, stadiumName);
+                int rowCount = ps.executeUpdate();
+                if (rowCount > 0) {
+                    ResultSet generatedKeys = ps.getGeneratedKeys();
+                }
+            } catch (SQLException e) {
+                connection.rollback();
+                System.out.println("경기장 등록과정에서 Exception 발생 : " + e.getMessage());
+            } finally {
+                connection.setAutoCommit(true);
             }
-        } catch (SQLException e) {
-            connection.rollback();
-            System.out.println("경기장 등록과정에서 Exception 발생 : " + e.getMessage());
-        } finally {
-            connection.setAutoCommit(true);
         }
-        return null;
+        return null;// 계좌 입력 실패
     }
 
     public List<Stadium> getAllStadium() throws SQLException {
