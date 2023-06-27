@@ -5,6 +5,7 @@ import model.player.Player;
 import model.player.PlayerDao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class PlayerService {
     private PlayerCreateRequestDto playerCreateRequestDto;
@@ -31,8 +32,14 @@ public class PlayerService {
         System.out.println("성공");
     }
 
-    public void 선수목록() {
+    public void 선수목록(String requestData) throws SQLException {
+
+        Integer requestTeamId = Integer.parseInt(requestData.split("=")[1]); // teamId=1
+
+        List<Player> playerList = playerDao.getPlayersByTeam(requestTeamId);
+        for(Player player : playerList) {
+            System.out.println(player.toString());
+        }
 
     }
-
 }

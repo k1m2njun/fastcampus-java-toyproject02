@@ -35,16 +35,14 @@ public class BaseBallApplication {
                 requestData = request.split("[?]")[1]; // "teamId=1&name=이대호&position=1루수"
 
                 try {
-                    if(order.equals("선수등록")) playerService.선수등록(requestData);
+                    if(order.equals("선수등록")) playerService.선수등록(requestData); // 3.5 - 선수 등록
+                    if(order.equals("선수목록")) playerService.선수목록(requestData); // 3.6 - 팀 별 선수 목록 조회
 
                     if(order.equals("야구장등록")) {
                         // 야구장등록?name=잠실야구장
                     }
                     if(order.equals("팀등록")) {
                         // 팀등록?stadiumId=1&name=NC
-                    }
-                    if(order.equals("선수목록")) {
-                        // 선수목록?teamId=1
                     }
                     if(order.equals("퇴출등록")) {
                         // 퇴출등록?playerId=1&reason=도박
