@@ -15,13 +15,6 @@ public class BaseBallApplication {
         //PlayerDao playerDao = new PlayerDao(connection);
         StadiumDao stadiumDao = new StadiumDao(connection);
 
-//
-//        try {
-//            playerDao.createPlayerTable();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
         Scanner scanner = new Scanner(System.in);
         String request = "";
         String requestData = "";
@@ -49,13 +42,15 @@ public class BaseBallApplication {
                     String stadiumName = words[2];
                     connection.setAutoCommit(false);
                     StadiumService stadiumService = new StadiumService(stadiumDao,connection);
-                    stadiumService.register(stadiumName);
+                    stadiumService.registerNewStadium(stadiumName);
                     connection.commit();
                     flag++;
                     continue;
                 }
                 if (order.equals("야구장목록")) {//2.예시 -- 요청 : 야구장목록
-
+                    StadiumService stadiumService = new StadiumService(stadiumDao,connection);
+                    stadiumService.getStadiumList();
+                    flag++;
                     continue;
                 }
                 if (order.equals("팀등록")) {//3.예시 -- 요청 : 팀등록?stadiumId=1&name=NC

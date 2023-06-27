@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
-@ToString
+
 @Getter
 public class Stadium {
 
@@ -23,4 +23,12 @@ public class Stadium {
         this.createdAt = createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "Stadium{" +
+                "id = " + id + "\t\t"+
+                ", name = " + name + "\t\t\t\t" +
+                ", createdAt = " + createdAt +
+                '}';
+    }
 }
