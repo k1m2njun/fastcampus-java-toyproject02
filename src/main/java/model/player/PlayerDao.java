@@ -1,5 +1,6 @@
 package model.player;
 
+import dto.player.PlayerGetResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter @NoArgsConstructor
 public class PlayerDao {
     private Connection connection;
+    private PlayerGetResponseDto playerGetResponseDto;
 
     // PlayerDao Singleton
     private static class singleInstanceHolder {
@@ -23,9 +25,6 @@ public class PlayerDao {
     public void connectDB(Connection connection) {
         this.connection = connection;
     }
-//    public PlayerDao(Connection connection) {
-//        this.connection = connection;
-//    }
 
     // 전체 선수 목록
     public List<Player> getAllPlayers() throws SQLException {
@@ -43,6 +42,7 @@ public class PlayerDao {
     }
 
     // 3.5 선수 등록, Service 분리
+    // TODO - 예외처리
     public Player createPlayer(Player player) throws SQLException {
         String query = "INSERT INTO player (team_id, name, position, created_at) " +
                 "VALUES (?, ?, ?, now())";
@@ -109,16 +109,31 @@ public class PlayerDao {
 
     // 3.6 팀별 선수 목록 조회
     // TODO - SELECT에서 team_id 제외하고 싶은데 안됨. DTO 따로 둬야 할 것 같음.
-    public List<Player> getPlayersByTeam(int teamId) throws SQLException {
-        List<Player> playerList = new ArrayList<>();
-        String query = "SELECT * FROM player WHERE team_id = ?";
-        //id, name, position, created_at
+//    public List<Player> getPlayersByTeam(int teamId) throws SQLException {
+//        List<Player> playerList = new ArrayList<>();
+//        String query = "SELECT * FROM player WHERE team_id = ?";
+//        //id, name, position, created_at
+//        try (PreparedStatement statement = connection.prepareStatement(query)) {
+//            statement.setInt(1, teamId);
+//            try (ResultSet resultSet = statement.executeQuery()) {
+//                while (resultSet.next()) {
+//                    Player player = buildPlayerFromResultSet(resultSet);
+//                    playerList.add(player);
+//                }
+//            }
+//        }
+//        return playerList;
+//    }
+    public List<PlayerGetResponseDto> getPlayersByTeam(int teamId) throws SQLException {
+        List<PlayerGetResponseDto> playerList = new ArrayList<>();
+        playerGetResponseDto = new PlayerGetResponseDto();
+        String query = "SELECT id, name, position, created_at FROM player WHERE team_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, teamId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    Player player = buildPlayerFromResultSet(resultSet);
-                    playerList.add(player);
+                    playerGetResponseDto = PlayerGetResponseDto.buildPlayerFromResultSet(resultSet);
+                    playerList.add(playerGetResponseDto);
                 }
             }
         }

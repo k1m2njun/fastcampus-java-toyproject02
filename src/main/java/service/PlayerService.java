@@ -1,6 +1,7 @@
 package service;
 
 import dto.player.PlayerCreateRequestDto;
+import dto.player.PlayerGetResponseDto;
 import model.player.Player;
 import model.player.PlayerDao;
 
@@ -9,10 +10,12 @@ import java.util.List;
 
 public class PlayerService {
     private PlayerCreateRequestDto playerCreateRequestDto;
+    private PlayerGetResponseDto playerGetResponseDto;
     private PlayerDao playerDao;
 
     public PlayerService(PlayerDao playerDao) {
         this.playerCreateRequestDto = new PlayerCreateRequestDto();
+        this.playerGetResponseDto = new PlayerGetResponseDto();
         this.playerDao = playerDao;
     }
 
@@ -36,10 +39,9 @@ public class PlayerService {
 
         Integer requestTeamId = Integer.parseInt(requestData.split("=")[1]); // teamId=1
 
-        List<Player> playerList = playerDao.getPlayersByTeam(requestTeamId);
-        for(Player player : playerList) {
-            System.out.println(player.toString());
+        List<PlayerGetResponseDto> playerGetResponseDtoList = playerDao.getPlayersByTeam(requestTeamId);
+        for(PlayerGetResponseDto playerGetResponseDto : playerGetResponseDtoList) {
+            System.out.println(playerGetResponseDto.toString());
         }
-
     }
-}
+}  
