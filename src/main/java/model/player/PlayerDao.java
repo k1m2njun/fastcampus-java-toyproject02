@@ -15,6 +15,7 @@ public class PlayerDao {
     private static class singleInstanceHolder {
         private static final PlayerDao INSTANCE = new PlayerDao();
     }
+
     public static PlayerDao getInstance() {
         return singleInstanceHolder.INSTANCE;
     }
@@ -31,7 +32,7 @@ public class PlayerDao {
         List<Player> playerList = new ArrayList<>();
         String query = "SELECT * FROM player";
         try (Statement statement = connection.createStatement()) {
-            try(ResultSet resultSet = statement.executeQuery(query)){
+            try (ResultSet resultSet = statement.executeQuery(query)) {
                 while (resultSet.next()) {
                     Player player = buildPlayerFromResultSet(resultSet);
                     playerList.add(player);
@@ -41,40 +42,70 @@ public class PlayerDao {
         return playerList;
     }
 
-    // 3.5 선수 등록
-    public Player createPlayer(
-            Integer teamId,
-            String name,
-            String position
-    ) throws SQLException {
+    // 3.5 선수 등록, Service 분리
+    public Player createPlayer(Player player) throws SQLException {
         String query = "INSERT INTO player (team_id, name, position, created_at) " +
                 "VALUES (?, ?, ?, now())";
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             // null check - team_id
-            if(teamId == 0 || teamId == null) return null;
+            if (player.getTeamId() == 0 || player.getTeamId() == null) return null;
             // null check - name
-            if(name.isBlank() || name == null) return null;
+            if (player.getName().isBlank() || player.getName() == null) return null;
             // null check - position
-            if(position.isBlank() || position == null) return null;
+            if (player.getPosition().isBlank() || player.getPosition() == null) return null;
 
             // duplicate check - position
-            for(Player p : getAllPlayers()) {
-                if(position.equals(p.getPosition())) return null;
+            for (Player p : getAllPlayers()) {
+                if (player.getPosition().equals(p.getPosition())) return null;
             }
 
-            statement.setInt(1, teamId);
-            statement.setString(2, name);
-            statement.setString(3, position);
+            statement.setInt(1, player.getTeamId());
+            statement.setString(2, player.getName());
+            statement.setString(3, player.getPosition());
 
             int rowCount = statement.executeUpdate();
 
-            if(rowCount > 0){
-                return getPlayerByPosition(position, teamId);
+            if (rowCount > 0) {
+                return getPlayerByPosition(player.getPosition(), player.getTeamId());
             }
         }
         return null;
     }
+//    public Player createPlayer(
+//            Integer teamId,
+//            String name,
+//            String position
+//    ) throws SQLException {
+//        String query = "INSERT INTO player (team_id, name, position, created_at) " +
+//                "VALUES (?, ?, ?, now())";
+//        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+//
+//            // null check - team_id
+//            if (teamId == 0 || teamId == null) return null;
+//            // null check - name
+//            if (name.isBlank() || name == null) return null;
+//            // null check - position
+//            if (position.isBlank() || position == null) return null;
+//
+//            // duplicate check - position
+//            for (Player p : getAllPlayers()) {
+//                if (position.equals(p.getPosition())) return null;
+//            }
+//
+//            statement.setInt(1, teamId);
+//            statement.setString(2, name);
+//            statement.setString(3, position);
+//
+//            int rowCount = statement.executeUpdate();
+//
+//            if (rowCount > 0) {
+//                System.out.println("성공");
+//                return getPlayerByPosition(position, teamId);
+//            }
+//        }
+//        return null;
+//    }
 
     // 3.6 팀별 선수 목록 조회
     // TODO - SELECT에서 team_id 제외하고 싶은데 안됨. DTO 따로 둬야 할 것 같음.
@@ -84,7 +115,7 @@ public class PlayerDao {
         //id, name, position, created_at
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, teamId);
-            try(ResultSet resultSet = statement.executeQuery()){
+            try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     Player player = buildPlayerFromResultSet(resultSet);
                     playerList.add(player);
