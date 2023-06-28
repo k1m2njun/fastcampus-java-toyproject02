@@ -30,13 +30,13 @@ public class TeamService {
         }
 
         // 2. 해당 경기장에 팀이 등록된 상태인지 확인  -> 등록이 안된 상태여야함.
-        if(teamDao.getTeamByStadiumId(stadiumId)==null){
+        if(teamDao.getTeamByStadiumId(stadiumId)!=null){
             System.out.println("해당 경기장에 이미 배정된 팀이 있습니다.");
             return null;
         }
 
         // 3. 등록하는 팀이름이 중복되지 않아야함.
-        if(teamDao.getTeamByName(teamName)==null){
+        if(teamDao.getTeamByName(teamName)!=null){
             System.out.println("이미 존재하는 팀이름입니다.");
             return null;
         }
@@ -45,12 +45,14 @@ public class TeamService {
         if(team==null){
             System.out.println("팀 등록 실패");
             return null;
+        }else{
+            System.out.println("팀 등록 성공");
+            return team;
         }
-        return team;
 
     }
 
-    
+
 
 
 

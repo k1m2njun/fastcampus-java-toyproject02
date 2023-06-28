@@ -13,7 +13,7 @@ public class TeamDao {
     // 3. 등록하는 팀이름이 중복되지 않아야함. -> [TeamDao 사용]
     // 4.. 1, 2, 3을 만족해야 팀으로 등록가능함.
     public Team createTeam(int stadiumId, String teamName){
-        String query = "INSERT INTO team(stadiumId, name, created_at) VALUES(?, ?, now())";
+        String query = "INSERT INTO team(stadium_id, name, created_at) VALUES(?, ?, now())";
         try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, stadiumId);
             ps.setString(2, teamName);
@@ -34,7 +34,7 @@ public class TeamDao {
         //-> StadiumDao 클래스에서 getStadiumById 메서드 추가
         //-> 다시 생각해보니 TeamDao 에서 해결할수 있는 문제인것 같다. getStadiumById 메서드는 만든채로 놔두기로
         //1.sql
-        String query = "SELECT * FROM team WHERE name = ?";
+        String query = "SELECT * FROM team WHERE stadium_id = ?";
         try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
             ps.setInt(1, stadiumId);
             try(ResultSet rs = ps.executeQuery()){//3.send ->  object type으로 리턴

@@ -1,6 +1,8 @@
 import db.DBConnection;
 import model.stadium.StadiumDao;
+import model.team.TeamDao;
 import service.StadiumService;
+import service.TeamService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ public class BaseBallApplication {
         Connection connection = DBConnection.getInstance();
         //PlayerDao playerDao = new PlayerDao(connection);
         StadiumDao stadiumDao = new StadiumDao(connection);
+        TeamDao teamDao = new TeamDao(connection);
 
         Scanner scanner = new Scanner(System.in);
         String request = "";
@@ -51,10 +54,12 @@ public class BaseBallApplication {
                     flag++;
                     continue;
                 }
-                if (order.equals("팀등록")) {//3.예시 -- 요청 : 팀등록?stadiumId=1&name=NC
-                    String teamName = words[2];
+                if (order.equals("팀등록")) {//3.예시 -- 요청 : 팀등록?stadiumId=4&name=NC
+                    int stadiumId = Integer.parseInt(words[2]);
+                    String teamName = words[4];
                     connection.setAutoCommit(false);
-
+                    TeamService teamService = new TeamService(stadiumDao,teamDao,connection);
+                    teamService.registerNewTeam(stadiumId, teamName);
                     connection.commit();
                     flag++;
                     continue;
@@ -63,27 +68,28 @@ public class BaseBallApplication {
 
                     continue;
                 }
-                if (order.equals("선수등록")) {//요청 : 선수등록?teamId=1&name=이대호&position=1루수
+                if (order.equals("선수등록")) {//5.요청 : 선수등록?teamId=1&name=이대호&position=1루수
 
                     continue;
                 }
-                if (order.equals("선수목록")) {//요청 : 선수목록?teamId=1
+                if (order.equals("선수목록")) {//6.요청 : 선수목록?teamId=1
 
                     continue;
                 }
-                if (order.equals("퇴출등록")) {//요청 : 퇴출등록?playerId=1&reason=도박
+                if (order.equals("퇴출등록")) {//7.요청 : 퇴출등록?playerId=1&reason=도박
 
                     continue;
                 }
-                if (order.equals("퇴출목록")) {//요청 : 퇴출목록
+                if (order.equals("퇴출목록")) {//8.요청 : 퇴출목록
 
                     continue;
                 }
-                if (order.equals("포지션별목록")) {//요청 : 포지션별목록
+                if (order.equals("포지션별목록")) {//10.요청 : 포지션별목록
 
                     continue;
                 }
             } catch (SQLException e) {
+                connection.rollback();
                 System.out.println("[ERROR]" + e.getMessage());
             } finally {
                 connection.setAutoCommit(true);
