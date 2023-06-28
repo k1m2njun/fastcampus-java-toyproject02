@@ -1,6 +1,4 @@
 import db.DBConnection;
-import model.player.PlayerDao;
-import model.stadium.Stadium;
 import model.stadium.StadiumDao;
 import service.StadiumService;
 
@@ -54,7 +52,11 @@ public class BaseBallApplication {
                     continue;
                 }
                 if (order.equals("팀등록")) {//3.예시 -- 요청 : 팀등록?stadiumId=1&name=NC
+                    String teamName = words[2];
+                    connection.setAutoCommit(false);
 
+                    connection.commit();
+                    flag++;
                     continue;
                 }
                 if (order.equals("팀목록")) {//4.예시 -- 요청 : 팀목록
