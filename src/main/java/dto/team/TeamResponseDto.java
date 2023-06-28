@@ -1,10 +1,10 @@
-package model.team;
+package dto.team;
 
 import lombok.Getter;
 
 import java.sql.Timestamp;
 @Getter
-public class TeamRespDto {
+public class TeamResponseDto {
     private Integer teamId;
     private String teamName;
     private Timestamp teamCreatedAt;
@@ -12,7 +12,7 @@ public class TeamRespDto {
     private String teamStadiumName;
     private Timestamp teamStadiumCreatedAt;
 
-    public TeamRespDto(Integer teamId, String teamName, Timestamp teamCreatedAt, Integer teamStadiumId, String teamStadiumName, Timestamp teamStadiumCreatedAt) {
+    public TeamResponseDto(Integer teamId, String teamName, Timestamp teamCreatedAt, Integer teamStadiumId, String teamStadiumName, Timestamp teamStadiumCreatedAt) {
         this.teamId = teamId;
         this.teamName = teamName;
         this.teamCreatedAt = teamCreatedAt;

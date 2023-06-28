@@ -1,6 +1,6 @@
 package model.team;
 
-import model.stadium.Stadium;
+import dto.team.TeamResponseDto;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -75,9 +75,9 @@ public class TeamDao {
 
     }
 
-    public List<TeamRespDto> getAllTeam() {
+    public List<TeamResponseDto> getAllTeam() {
         //0. collection
-        List<TeamRespDto> teamList = new ArrayList<>();
+        List<TeamResponseDto> teamList = new ArrayList<>();
 
         //1. sql
         String query = "SELECT \n" +
@@ -88,14 +88,14 @@ public class TeamDao {
                 "s.name,\n" +
                 "s.created_at\n" +
                 "FROM  team t\n" +
-                "INNER JOIN stadium s ON t.stadium_id = s.id;";
+                "INNER JOIN stadium s ON t.stadium_id = s.id";
         try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
 
             try (ResultSet rs = ps.executeQuery()) {//3. send , object type으로 리턴
                 //4. cursor while
                 while (rs.next()) {
                     //5. mapping (db result -> model)
-                    TeamRespDto teamRespDto = new TeamRespDto(
+                    TeamResponseDto teamResponseDto = new TeamResponseDto(
                             rs.getInt("t.id"),
                             rs.getString("t.name"),
                             rs.getTimestamp("t.created_at"),
@@ -104,7 +104,7 @@ public class TeamDao {
                             rs.getTimestamp("s.created_at")
                     );
                     // 6. collect
-                    teamList.add(teamRespDto);
+                    teamList.add(teamResponseDto);
                 }
             }
             return teamList;
