@@ -3,8 +3,6 @@ package dto.outplayer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import model.outplayer.OutPlayer;
-import model.player.Player;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

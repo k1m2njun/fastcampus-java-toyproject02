@@ -1,15 +1,11 @@
 package model.outplayer;
 
 import dto.outplayer.OutPlayerResponseDto;
+import dto.outplayer.OutPlayersOnlyResponseDto;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static dto.outplayer.OutPlayerResponseDto.buildPlayerFromResultSet;
 
 public class OutPlayerDao {
     private Connection connection;
@@ -26,7 +22,66 @@ public class OutPlayerDao {
         this.connection = connection;
     }
 
-    // 퇴출 선수 목록
+    // 퇴출 선수 id 조회 - 중복 확인용
+    public List<OutPlayersOnlyResponseDto> getOnlyOutPlayers() throws SQLException {
+        List<OutPlayersOnlyResponseDto> outPlayerList = new ArrayList<>();
+        String query = "SELECT player_id FROM out_player";
+        try (Statement statement = connection.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery(query)) {
+                while (resultSet.next()) {
+                    OutPlayersOnlyResponseDto outPlayer = OutPlayersOnlyResponseDto.buildPlayerFromResultSet(resultSet);
+                    outPlayerList.add(outPlayer);
+                }
+            }
+        }
+        return outPlayerList;
+    }
+
+    // 3.7 퇴출 선수 등록
+    // TODO - 예외처리
+    public OutPlayer createOutPlayer(OutPlayer outPlayer) throws SQLException {
+        String query = "INSERT INTO out_player (player_id, reason, created_at) " +
+                "VALUES (?, ?, now())";
+        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            // null check - player_id
+            if (outPlayer.getPlayerId() == 0 || outPlayer.getPlayerId() == null) return null;
+            // null check - reason
+            if (outPlayer.getReason().isBlank() || outPlayer.getReason() == null) return null;
+
+            // duplicate check - position
+            for (OutPlayersOnlyResponseDto p : getOnlyOutPlayers()) {
+                if (outPlayer.getPlayerId() == p.getPlayerId()) {
+                    System.out.println("중복된 player_id 입니다.");
+                    return null;
+                }
+            }
+            statement.setInt(1, outPlayer.getPlayerId());
+            statement.setString(2, outPlayer.getReason());
+
+            int rowCount = statement.executeUpdate();
+
+            if (rowCount > 0) {
+                return getOutPlayerByPlayerId(outPlayer.getPlayerId());
+            }
+        }
+        return null;
+    }
+
+    private OutPlayer getOutPlayerByPlayerId(int playerId) throws SQLException {
+        String query = "SELECT * FROM out_player WHERE player_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, playerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return buildOutPlayerFromResultSet(resultSet);
+                }
+            }
+        }
+        return null;
+    }
+
+    // 3.8 퇴출 선수 목록
     public List<OutPlayerResponseDto> getAllOutPlayers() throws SQLException {
         List<OutPlayerResponseDto> outPlayerResponseList = new ArrayList<>();
         String query =
@@ -40,11 +95,26 @@ public class OutPlayerDao {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(query)) {
                 while (resultSet.next()) {
-                    OutPlayerResponseDto outPlayerResponse = buildPlayerFromResultSet(resultSet);
+                    OutPlayerResponseDto outPlayerResponse = OutPlayerResponseDto.buildPlayerFromResultSet(resultSet);
                     outPlayerResponseList.add(outPlayerResponse);
                 }
             }
         }
         return outPlayerResponseList;
+    }
+
+    // OutPlayer response builder
+    private OutPlayer buildOutPlayerFromResultSet(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        int playerId = resultSet.getInt("player_id");
+        String reason = resultSet.getString("reason");
+        Timestamp createdAt = resultSet.getTimestamp("created_at");
+
+        return OutPlayer.builder()
+                .id(id)
+                .playerId(playerId)
+                .reason(reason)
+                .createdAt(createdAt)
+                .build();
     }
 }
