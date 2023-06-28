@@ -18,8 +18,6 @@ public class StadiumDao {
     // insert method
     public Stadium createStadium(String stadiumName) {
         String query = "INSERT INTO stadium(name, created_at) VALUES(?, now())";
-
-
         if (getStadiumByName(stadiumName)==null){// 없는 경기장이면 null 반환, -> 중복된 경기장이 아니면 insert
             try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, stadiumName);
@@ -28,8 +26,8 @@ public class StadiumDao {
                     return getStadiumByName(stadiumName);
                 }
             } catch (SQLException e) {
-                //connection.rollback();
                 System.out.println("경기장 등록과정에서 Exception 발생 : " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return null;// 계좌 입력 실패
@@ -62,6 +60,25 @@ public class StadiumDao {
             e.printStackTrace();
         }
         return stadiumList;
+    }
+
+    public Stadium getStadiumById(int stadiumPrimaryKeyId){
+        //1.sql
+        String query = "SELECT * FROM stadium Where id = ?";
+
+        try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
+            ps.setInt(1, stadiumPrimaryKeyId);
+            try(ResultSet rs = ps.executeQuery()){//3.send ->  object type으로 리턴
+                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
+                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
+                    return buildStadiumFromResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("경기장 id 검색중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;// stadium not found
     }
 
     public Stadium getStadiumByName(String stadiumName) {
