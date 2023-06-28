@@ -3,8 +3,10 @@ package service;
 import model.stadium.StadiumDao;
 import model.team.Team;
 import model.team.TeamDao;
+import model.team.TeamRespDto;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class TeamService {
 
@@ -50,6 +52,20 @@ public class TeamService {
             return team;
         }
 
+    }
+
+    public void getTeamList() {
+
+        List<TeamRespDto> teamList = teamDao.getAllTeam();
+
+        if(teamList == null){
+            System.out.println("등록된 팀이 없습니다.");
+            return;
+        }
+        for(TeamRespDto trd : teamList){
+            System.out.println(trd);
+        }
+        return;
     }
 
 

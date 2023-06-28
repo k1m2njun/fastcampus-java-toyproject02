@@ -65,7 +65,8 @@ public class BaseBallApplication {
                     continue;
                 }
                 if (order.equals("팀목록")) {//4.예시 -- 요청 : 팀목록
-
+                    TeamService teamService = new TeamService(stadiumDao,teamDao,connection);
+                    teamService.getTeamList();
                     continue;
                 }
                 if (order.equals("선수등록")) {//5.요청 : 선수등록?teamId=1&name=이대호&position=1루수
