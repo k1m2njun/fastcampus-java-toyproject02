@@ -56,7 +56,6 @@ public class PlayerDao {
             statement.setInt(1, id);
 
             int rowCount = statement.executeUpdate();
-
             if (rowCount > 0) {
                 System.out.println(player.getName() + " 선수가 팀에서 퇴출됩니다.");
             }
@@ -69,9 +68,8 @@ public class PlayerDao {
         String query = "INSERT INTO player (team_id, name, position, created_at) " +
                 "VALUES (?, ?, ?, now())";
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-
-            // null check - team_id
-            if (player.getTeamId() == 0 || player.getTeamId() == null) return null;
+//            // null check - team_id
+//            if (player.getTeamId() == 0 || player.getTeamId() == null) return null;
             // null check - name
             if (player.getName().isBlank() || player.getName() == null) return null;
             // null check - position
@@ -178,6 +176,7 @@ public class PlayerDao {
     public Player getPlayerByPosition(String position, int teamId) throws SQLException {
         String query = "SELECT * FROM player WHERE team_id = ? AND position = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+
             statement.setInt(1, teamId);
             statement.setString(2, position);
             try (ResultSet resultSet = statement.executeQuery()) {

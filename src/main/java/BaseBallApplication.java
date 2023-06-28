@@ -12,15 +12,15 @@ import java.util.Scanner;
 
 public class BaseBallApplication {
 
-    static final PlayerDao playerDao = PlayerDao.getInstance();
-    static final OutPlayerDao outPlayerDao = OutPlayerDao.getInstance();
-    static final Connection connection = DBConnection.getInstance();
+    public static void main(String[] args) throws SQLException {
+        PlayerDao playerDao = PlayerDao.getInstance();
+        OutPlayerDao outPlayerDao = OutPlayerDao.getInstance();
+        Connection connection = DBConnection.getInstance();
 
-    public static void main(String[] args) {
         playerDao.connectDB(connection);
         outPlayerDao.connectDB(connection);
         PlayerService playerService = new PlayerService(playerDao);
-        OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao);
+        OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao, playerDao);
 
         Scanner scanner = new Scanner(System.in);
         String request = "";
@@ -28,6 +28,7 @@ public class BaseBallApplication {
         String order = "";
 
         while(true) {
+
             System.out.println("어떤 기능을 요청하시겠습니까? ");
             request = scanner.nextLine(); // "선수등록?teamId=1&name=이대호&position=1루수"
             if(request.equals("종료")) {
@@ -35,20 +36,23 @@ public class BaseBallApplication {
                 break;
             }
             try {
+                connection.setAutoCommit(false);
+
                 if(request.contains("?")) {
                     // 기본 파싱 ?
                     order = request.split("[?]")[0]; // "선수등록"
                     System.out.println(order + "을 요청합니다.");
                     requestData = request.split("[?]")[1]; // "teamId=1&name=이대호&position=1루수"
 
-                    if(order.equals("선수등록")) playerService.선수등록(requestData); // 3.5 - 선수 등록
-                    if(order.equals("선수목록")) playerService.선수목록(requestData); // 3.6 - 팀 별 선수 목록 조회
-
+                    // 3.5 - 선수등록?teamId=1&name=이대호&position=1루수
+                    if(order.equals("선수등록")) playerService.선수등록(requestData);
+                    // 3.6 - 선수목록?teamId=1
+                    if(order.equals("선수목록")) playerService.선수목록(requestData);
+                    // 야구장등록?name=잠실야구장
                     if(order.equals("야구장등록")) {
-                        // 야구장등록?name=잠실야구장
                     }
+                    // 팀등록?stadiumId=1&name=NC
                     if(order.equals("팀등록")) {
-                        // 팀등록?stadiumId=1&name=NC
                     }
                     // 퇴출등록?playerId=1&reason=도박
                     if(order.equals("퇴출등록")) {
@@ -63,8 +67,13 @@ public class BaseBallApplication {
 
                 }
                 if(request.equals("퇴출목록")) outPlayerService.퇴출목록();
-            } catch (SQLException e){
-                System.out.println("[ERROR]" + e.getMessage());
+
+                connection.commit();
+            } catch (SQLException e) {
+//                connection.rollback();
+                throw new RuntimeException(e);
+            } finally {
+//                connection.setAutoCommit(true);
                 //throw new RuntimeException(e);
             }
         }

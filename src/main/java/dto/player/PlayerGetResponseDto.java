@@ -15,14 +15,14 @@ public class PlayerGetResponseDto {
     private Integer id;
     private String name;
     private String position;
-    private Status status;
+//    private Status status;
     private Timestamp createdAt;
 
     public static Player buildPlayerFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         String name = resultSet.getString("name");
         String position = resultSet.getString("position");
-        Status status = (Status) resultSet.getObject("status");
+//        Status status = (Status) resultSet.getObject("status");
         Timestamp createdAt = resultSet.getTimestamp("created_at");
 
         return Player.builder()

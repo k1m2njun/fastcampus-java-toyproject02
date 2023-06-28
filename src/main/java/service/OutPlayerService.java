@@ -14,9 +14,9 @@ public class OutPlayerService {
     private OutPlayerDao outPlayerDao;
     private OutPlayerCreateRequestDto outPlayerCreateRequestDto;
 
-    public OutPlayerService(OutPlayerDao outPlayerDao) {
+    public OutPlayerService(OutPlayerDao outPlayerDao, PlayerDao playerDao) {
         this.outPlayerDao = outPlayerDao;
-        this.playerDao = new PlayerDao();
+        this.playerDao = playerDao;
         this.outPlayerCreateRequestDto = new OutPlayerCreateRequestDto();
     }
 
