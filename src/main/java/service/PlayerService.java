@@ -30,8 +30,7 @@ public class PlayerService {
         playerCreateRequestDto.setName(requestName);
         playerCreateRequestDto.setPosition(requestPosition);
 
-        Player player = playerCreateRequestDto.toModel();
-        System.out.println(playerDao.createPlayer(player).toString());
+        System.out.println(playerDao.createPlayer(playerCreateRequestDto.toModel()).toString());
         System.out.println("성공");
     }
 
@@ -39,9 +38,9 @@ public class PlayerService {
 
         Integer requestTeamId = Integer.parseInt(requestData.split("=")[1]); // teamId=1
 
-        List<PlayerGetResponseDto> playerGetResponseDtoList = playerDao.getPlayersByTeam(requestTeamId);
-        for(PlayerGetResponseDto playerGetResponseDto : playerGetResponseDtoList) {
-            System.out.println(playerGetResponseDto.toString());
+        List<Player> playerResponseList = playerDao.getPlayersByTeam(requestTeamId);
+        for(Player playerResponse : playerResponseList) {
+            System.out.println(playerResponse.toString());
         }
     }
 }  

@@ -1,5 +1,6 @@
 package model.player;
 
+import dto.player.PlayerCreateRequestDto;
 import dto.player.PlayerGetResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 public class PlayerDao {
     private Connection connection;
     private PlayerGetResponseDto playerGetResponseDto;
+    private PlayerCreateRequestDto playerCreateRequestDto;
 
     // PlayerDao Singleton
     private static class singleInstanceHolder {
@@ -53,7 +55,7 @@ public class PlayerDao {
             // null check - name
             if (player.getName().isBlank() || player.getName() == null) return null;
             // null check - position
-            if (player.getPosition().isBlank() || player.getPosition() == null) return null;
+            if (player.getPosition() == null) return null;
 
             // duplicate check - position
             for (Player p : getAllPlayers()) {
@@ -108,7 +110,6 @@ public class PlayerDao {
 //    }
 
     // 3.6 팀별 선수 목록 조회
-    // TODO - SELECT에서 team_id 제외하고 싶은데 안됨. DTO 따로 둬야 할 것 같음.
 //    public List<Player> getPlayersByTeam(int teamId) throws SQLException {
 //        List<Player> playerList = new ArrayList<>();
 //        String query = "SELECT * FROM player WHERE team_id = ?";
@@ -124,20 +125,19 @@ public class PlayerDao {
 //        }
 //        return playerList;
 //    }
-    public List<PlayerGetResponseDto> getPlayersByTeam(int teamId) throws SQLException {
-        List<PlayerGetResponseDto> playerList = new ArrayList<>();
-        playerGetResponseDto = new PlayerGetResponseDto();
+    public List<Player> getPlayersByTeam(int teamId) throws SQLException {
+        List<Player> playerResponseList = new ArrayList<>();
         String query = "SELECT id, name, position, created_at FROM player WHERE team_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, teamId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    playerGetResponseDto = PlayerGetResponseDto.buildPlayerFromResultSet(resultSet);
-                    playerList.add(playerGetResponseDto);
+                    Player playerResponse = PlayerGetResponseDto.buildPlayerFromResultSet(resultSet);
+                    playerResponseList.add(playerResponse);
                 }
             }
         }
-        return playerList;
+        return playerResponseList;
     }
 
     // 포지션으로 선수 검색

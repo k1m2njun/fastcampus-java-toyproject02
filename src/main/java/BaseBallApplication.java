@@ -1,7 +1,9 @@
 import db.DBConnection;
 import dto.player.PlayerCreateRequestDto;
+import model.outplayer.OutPlayerDao;
 import model.player.Player;
 import model.player.PlayerDao;
+import service.OutPlayerService;
 import service.PlayerService;
 
 import java.sql.Connection;
@@ -11,11 +13,14 @@ import java.util.Scanner;
 public class BaseBallApplication {
 
     static final PlayerDao playerDao = PlayerDao.getInstance();
+    static final OutPlayerDao outPlayerDao = OutPlayerDao.getInstance();
     static final Connection connection = DBConnection.getInstance();
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws SQLException {
         playerDao.connectDB(connection);
+        outPlayerDao.connectDB(connection);
         PlayerService playerService = new PlayerService(playerDao);
+        OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao);
 
         Scanner scanner = new Scanner(System.in);
         String request = "";
@@ -58,9 +63,7 @@ public class BaseBallApplication {
             if(request.equals("팀목록")) {
 
             }
-            if(request.equals("퇴출목록")) {
-
-            }
+            if(request.equals("퇴출목록")) outPlayerService.퇴출목록();
         }
     }
 }
