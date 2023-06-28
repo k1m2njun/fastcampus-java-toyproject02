@@ -43,6 +43,26 @@ public class PlayerDao {
         return playerList;
     }
 
+    // 선수 방출
+    public void teamOutPlayer(int id) throws SQLException {
+        String query = "UPDATE player SET team_id = null WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+            Player player = getPlayerById(id);
+
+            // null check
+            if (player == null) return;
+
+            statement.setInt(1, id);
+
+            int rowCount = statement.executeUpdate();
+
+            if (rowCount > 0) {
+                System.out.println(player.getName() + " 선수가 팀에서 퇴출됩니다.");
+            }
+        }
+    }
+
     // 3.5 선수 등록, Service 분리
     // TODO - 예외처리
     public Player createPlayer(Player player) throws SQLException {
@@ -140,7 +160,21 @@ public class PlayerDao {
         return playerResponseList;
     }
 
-    // 포지션으로 선수 검색
+    // id로 선수 검색
+    public Player getPlayerById(int id) throws SQLException {
+        String query = "SELECT * FROM player WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return buildPlayerFromResultSet(resultSet);
+                }
+            }
+        }
+        return null;
+    }
+
+    // 팀별 포지션으로 선수 검색
     public Player getPlayerByPosition(String position, int teamId) throws SQLException {
         String query = "SELECT * FROM player WHERE team_id = ? AND position = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {

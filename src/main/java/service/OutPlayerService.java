@@ -3,26 +3,30 @@ package service;
 import dto.outplayer.OutPlayerCreateRequestDto;
 import dto.outplayer.OutPlayerResponseDto;
 import model.outplayer.OutPlayerDao;
-import model.player.Player;
+import model.player.PlayerDao;
 
 import java.sql.SQLException;
 import java.util.List;
 
 public class OutPlayerService {
 
+    private PlayerDao playerDao;
     private OutPlayerDao outPlayerDao;
     private OutPlayerCreateRequestDto outPlayerCreateRequestDto;
 
     public OutPlayerService(OutPlayerDao outPlayerDao) {
         this.outPlayerDao = outPlayerDao;
+        this.playerDao = new PlayerDao();
         this.outPlayerCreateRequestDto = new OutPlayerCreateRequestDto();
     }
 
-    public void 퇴출선수등록(String requestData) throws SQLException {
+    public void 퇴출등록(String requestData) throws SQLException {
 
         String[] requestDataList = requestData.split("&");
-        Integer requestPlayerId = Integer.parseInt(requestDataList[0].split("=")[1]); // teamId=1
-        String requestReason = requestDataList[1].split("=")[1]; // name=이대호
+        Integer requestPlayerId = Integer.parseInt(requestDataList[0].split("=")[1]);
+        String requestReason = requestDataList[1].split("=")[1];
+
+        playerDao.teamOutPlayer(requestPlayerId); // 선수 퇴출
 
         outPlayerCreateRequestDto.setPlayerId(requestPlayerId);
         outPlayerCreateRequestDto.setReason(requestReason);

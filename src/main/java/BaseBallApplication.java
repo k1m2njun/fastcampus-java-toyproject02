@@ -16,7 +16,7 @@ public class BaseBallApplication {
     static final OutPlayerDao outPlayerDao = OutPlayerDao.getInstance();
     static final Connection connection = DBConnection.getInstance();
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         playerDao.connectDB(connection);
         outPlayerDao.connectDB(connection);
         PlayerService playerService = new PlayerService(playerDao);
@@ -34,13 +34,13 @@ public class BaseBallApplication {
                 System.out.println("프로그램을 종료합니다.");
                 break;
             }
-            if(request.contains("?")) {
-                // 기본 파싱 ?
-                order = request.split("[?]")[0]; // "선수등록"
-                System.out.println(order + "을 요청합니다.");
-                requestData = request.split("[?]")[1]; // "teamId=1&name=이대호&position=1루수"
+            try {
+                if(request.contains("?")) {
+                    // 기본 파싱 ?
+                    order = request.split("[?]")[0]; // "선수등록"
+                    System.out.println(order + "을 요청합니다.");
+                    requestData = request.split("[?]")[1]; // "teamId=1&name=이대호&position=1루수"
 
-                try {
                     if(order.equals("선수등록")) playerService.선수등록(requestData); // 3.5 - 선수 등록
                     if(order.equals("선수목록")) playerService.선수목록(requestData); // 3.6 - 팀 별 선수 목록 조회
 
@@ -51,21 +51,22 @@ public class BaseBallApplication {
                         // 팀등록?stadiumId=1&name=NC
                     }
                     // 퇴출등록?playerId=1&reason=도박
-                    if(order.equals("퇴출등록")) outPlayerService.퇴출선수등록(requestData);
+                    if(order.equals("퇴출등록")) {
+                        outPlayerService.퇴출등록(requestData);
+                    }
+                } else System.out.println(request + "을 요청합니다.");
 
-                } catch (SQLException e){
-                    System.out.println("[ERROR]" + e.getMessage());
-                    //throw new RuntimeException(e);
+                if(request.equals("야구장목록")) {
+
                 }
-            } else System.out.println(request + "을 요청합니다.");
+                if(request.equals("팀목록")) {
 
-            if(request.equals("야구장목록")) {
-
+                }
+                if(request.equals("퇴출목록")) outPlayerService.퇴출목록();
+            } catch (SQLException e){
+                System.out.println("[ERROR]" + e.getMessage());
+                //throw new RuntimeException(e);
             }
-            if(request.equals("팀목록")) {
-
-            }
-            if(request.equals("퇴출목록")) outPlayerService.퇴출목록();
         }
     }
 }
