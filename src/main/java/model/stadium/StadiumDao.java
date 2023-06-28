@@ -66,7 +66,7 @@ public class StadiumDao {
 
     public Stadium getStadiumByName(String stadiumName) {
         //1.sql
-        String query = "SELECT * FROM stadium where name = ?";
+        String query = "SELECT * FROM stadium Where name = ?";
 
         try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
             ps.setString(1, stadiumName);

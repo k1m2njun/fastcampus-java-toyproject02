@@ -1,9 +1,6 @@
 package model.team;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 
 public class TeamDao {
 
@@ -25,9 +22,23 @@ public class TeamDao {
         return null;
     }
 
-    public Team getTeamByName(String name){
+    public Team getTeamByName(String teamName){
+        //1.sql
+        String query = "SELECT * FROM team WHERE name = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
+            ps.setString(1, teamName);
+            try(ResultSet rs = ps.executeQuery()){//3.send ->  object type으로 리턴
+                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
+                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
+                    return buildTeamFromResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("경기장 이름 검색중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;// team not found
 
-        return null;
     }
 
     private Team buildTeamFromResultSet(ResultSet rs) throws SQLException{
