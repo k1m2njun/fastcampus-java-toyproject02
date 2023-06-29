@@ -1,6 +1,10 @@
 import db.DBConnection;
+import model.outplayer.OutPlayerDao;
+import model.player.PlayerDao;
 import model.stadium.StadiumDao;
 import model.team.TeamDao;
+import service.OutPlayerService;
+import service.PlayerService;
 import service.StadiumService;
 import service.TeamService;
 
@@ -10,11 +14,21 @@ import java.util.Scanner;
 
 public class BaseBallApplication {
 
+    static final PlayerDao playerDao = PlayerDao.getInstance();
     public static void main(String[] args) throws SQLException {
         Connection connection = DBConnection.getInstance();
-        //PlayerDao playerDao = new PlayerDao(connection);
+        //-------------------------------------------------//
+        playerDao.connectDB(connection);
+        PlayerService playerService = new PlayerService(playerDao);
+
+
+        //------------------------------------------------//
         StadiumDao stadiumDao = new StadiumDao(connection);
         TeamDao teamDao = new TeamDao(connection);
+        OutPlayerDao outPlayerDao = new OutPlayerDao(connection);
+
+
+        //------------------------------------------------//
 
         Scanner scanner = new Scanner(System.in);
         String request = "";
@@ -34,9 +48,9 @@ public class BaseBallApplication {
             }
             words = request.split("\\?|=|&");
             order = words[0];//
-            for(String s: words){
-                System.out.println(s);
-            }
+//            for(String s: words){// 배열 확인
+//                System.out.println(s);
+//            }
 
             try {
                 if (order.equals("야구장등록")) {//1.예시 --요청 : 야구장등록?name=잠실야구장
@@ -78,11 +92,16 @@ public class BaseBallApplication {
                     continue;
                 }
                 if (order.equals("퇴출등록")) {//7.요청 : 퇴출등록?playerId=1&reason=도박
+                    int outPlayerId = Integer.parseInt(words[2]);
+                    String outPlayerReason = words[4];
+                    System.out.println(outPlayerId+" "+outPlayerReason);
+                    
 
                     continue;
                 }
                 if (order.equals("퇴출목록")) {//8.요청 : 퇴출목록
-
+                    OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao,playerDao,connection);
+                    outPlayerService.getOutPlayerList();
                     continue;
                 }
                 if (order.equals("포지션별목록")) {//10.요청 : 포지션별목록

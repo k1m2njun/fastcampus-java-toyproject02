@@ -2,17 +2,21 @@ package model.outplayer;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
-@ToString
+
+@Setter
 @Getter
+@ToString
 public class OutPlayer {
 
     private Integer id;
     private Integer playerId;
     private String reason;
     private Timestamp createdAt;
+
     @Builder
     public OutPlayer(
             Integer id,

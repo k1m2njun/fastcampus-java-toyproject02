@@ -113,7 +113,7 @@ public class TeamDao {
             System.out.println("전체 경기장 리스트 조회중 에러발생 : " + e.getMessage());
             e.printStackTrace();
         }
-        return teamList;
+        return null;
     }
 
     private Team buildTeamFromResultSet(ResultSet rs) throws SQLException {

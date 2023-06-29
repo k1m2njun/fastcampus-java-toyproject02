@@ -10,24 +10,31 @@ import java.sql.Timestamp;
 
 @Getter
 @Setter
-@ToString
 public class OutPlayerResponseDto {
 
-    private Integer idOfPlayer;
-    private String nameOfPlayer;
-    private String positionOfPlayer;
-    private String reasonOfOutPlayer;
-    private Timestamp createdAtOfOutPlayer;
+    private Integer playerId;
+    private String playerName;
+    private String playerPosition;
+    private String outPlayerReason;
+    private Timestamp outPlayerCreatedAt;
 
-    public static OutPlayerResponseDto buildPlayerFromResultSet(ResultSet resultSet) throws SQLException {
-        OutPlayerResponseDto outPlayerResponseDto = new OutPlayerResponseDto();
-
-        outPlayerResponseDto.setIdOfPlayer(resultSet.getInt("p.id"));
-        outPlayerResponseDto.setNameOfPlayer(resultSet.getString("p.name"));
-        outPlayerResponseDto.setPositionOfPlayer(resultSet.getString("p.position"));
-        outPlayerResponseDto.setReasonOfOutPlayer(resultSet.getString("o.reason(이유)"));
-        outPlayerResponseDto.setCreatedAtOfOutPlayer(resultSet.getTimestamp("o.day(퇴출일)"));
-
-        return outPlayerResponseDto;
+    public OutPlayerResponseDto(Integer playerId, String playerName, String playerPosition, String outPlayerReason, Timestamp outPlayerCreatedAt) {
+        this.playerId = playerId;
+        this.playerName = playerName;
+        this.playerPosition = playerPosition;
+        this.outPlayerReason = outPlayerReason;
+        this.outPlayerCreatedAt = outPlayerCreatedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Player And OutPlayer result{" +
+                "playerId=" + playerId +
+                ", playerName='" + playerName + '\'' +
+                ", playerPosition='" + playerPosition + '\'' +
+                ", outPlayerReason(이유)='" + outPlayerReason + '\'' +
+                ", outPlayerCreatedAt(퇴출일)=[" + outPlayerCreatedAt +
+                "]}";
+    }
+
 }
