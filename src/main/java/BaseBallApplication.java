@@ -95,8 +95,8 @@ public class BaseBallApplication {
                     int outPlayerId = Integer.parseInt(words[2]);
                     String outPlayerReason = words[4];
                     System.out.println(outPlayerId+" "+outPlayerReason);
-                    
-
+                    OutPlayerService outPlayerService = new OutPlayerService(outPlayerDao,playerDao,connection);
+                    outPlayerService.registerOutPlayer(outPlayerId, outPlayerReason);
                     continue;
                 }
                 if (order.equals("퇴출목록")) {//8.요청 : 퇴출목록
