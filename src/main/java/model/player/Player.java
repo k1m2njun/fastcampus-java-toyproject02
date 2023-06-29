@@ -1,12 +1,11 @@
 package model.player;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Getter
+@Setter
 @ToString
 public class Player {
     private Integer id;

@@ -1,7 +1,15 @@
 package model.team;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.sql.Timestamp;
 
+@Getter
+@Setter
+@ToString
 public class Team {
 
     private Integer id;
@@ -9,6 +17,7 @@ public class Team {
     private String name;
     private Timestamp createdAt;
 
+    @Builder
     public Team (
             Integer id,
             Integer stadiumId,
