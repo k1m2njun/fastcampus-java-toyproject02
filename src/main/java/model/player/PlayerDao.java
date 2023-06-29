@@ -12,7 +12,6 @@ import java.util.List;
 public class PlayerDao {
     private Connection connection;
 
-    // PlayerDao Singleton
     private static class singleInstanceHolder {
         private static final PlayerDao INSTANCE = new PlayerDao();
     }
@@ -32,7 +31,7 @@ public class PlayerDao {
         try (Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery(query)) {
                 while (resultSet.next()) {
-                    Player player = buildPlayerFromResultSet(resultSet);
+                    Player player = PlayerGetResponseDto.buildPlayerFromResultSetFull(resultSet);
                     playerList.add(player);
                 }
             }
@@ -67,7 +66,6 @@ public class PlayerDao {
             statement.setString(3, player.getPosition());
 
             int rowCount = statement.executeUpdate();
-
             if (rowCount > 0) {
                 return getPlayerByPosition(player.getPosition(), player.getTeamId());
             }
@@ -99,7 +97,7 @@ public class PlayerDao {
             try (ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    return buildPlayerFromResultSet(resultSet);
+                    return PlayerGetResponseDto.buildPlayerFromResultSetFull(resultSet);
                 }
             }
         }
@@ -115,7 +113,7 @@ public class PlayerDao {
             statement.setString(2, position);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return buildPlayerFromResultSet(resultSet);
+                    return PlayerGetResponseDto.buildPlayerFromResultSetFull(resultSet);
                 }
             }
         }
@@ -142,19 +140,5 @@ public class PlayerDao {
 //    }
 
     // Player response builder
-    private Player buildPlayerFromResultSet(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        int teamId = resultSet.getInt("team_id");
-        String name = resultSet.getString("name");
-        String position = resultSet.getString("position");
-        Timestamp createdAt = resultSet.getTimestamp("created_at");
 
-        return Player.builder()
-                .id(id)
-                .teamId(teamId)
-                .name(name)
-                .position(position)
-                .createdAt(createdAt)
-                .build();
-    }
 }

@@ -7,7 +7,6 @@ import exception.CustomException;
 import model.outplayer.OutPlayerDao;
 import model.player.Player;
 import model.player.PlayerDao;
-import model.team.TeamDao;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -24,7 +23,7 @@ public class OutPlayerService {
         this.outPlayerCreateRequestDto = new OutPlayerCreateRequestDto();
     }
 
-    public void 퇴출등록(String requestData) throws SQLException { // 퇴출등록?playerId=1&reason=도박
+    public void 퇴출등록(String requestData) throws SQLException, RuntimeException { // 퇴출등록?playerId=1&reason=도박
 
         try {
             String[] requestDataList = requestData.split("&");
@@ -41,22 +40,20 @@ public class OutPlayerService {
                 if (requestPlayerId == p.getPlayerId()) throw new CustomException("이미 퇴출된 선수입니다.");
             }
 
-            playerDao.teamOutPlayer(requestPlayerId); // 선수 퇴출
+            playerDao.teamOutPlayer(requestPlayerId); // 선수 퇴출 쿼리
 
             outPlayerCreateRequestDto.setPlayerId(requestPlayerId);
             outPlayerCreateRequestDto.setReason(requestReason);
 
-            System.out.println(outPlayerDao.createOutPlayer(outPlayerCreateRequestDto.toModel()).toString());
+            System.out.println(outPlayerDao.createOutPlayer(outPlayerCreateRequestDto.toModel()).toString()); // 퇴출 선수 등록 쿼리
             System.out.println("성공");
-        } catch (CustomException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
-        } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            e.getMessage();
         }
     }
 
-    public void 퇴출목록() throws SQLException {
+    public void 퇴출목록() throws SQLException, RuntimeException {
 
         try {
             List<OutPlayerResponseDto> outPlayerResponseList = outPlayerDao.getAllOutPlayers();
@@ -66,8 +63,9 @@ public class OutPlayerService {
             for(OutPlayerResponseDto outPlayerResponse : outPlayerResponseList) {
                 System.out.println(outPlayerResponse.toString());
             }
-        } catch (CustomException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
+            e.getMessage();
         }
 
     }

@@ -29,4 +29,20 @@ public class PlayerGetResponseDto {
                 .createdAt(createdAt)
                 .build();
     }
+
+    public static Player buildPlayerFromResultSetFull(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        int teamId = resultSet.getInt("team_id");
+        String name = resultSet.getString("name");
+        String position = resultSet.getString("position");
+        Timestamp createdAt = resultSet.getTimestamp("created_at");
+
+        return Player.builder()
+                .id(id)
+                .teamId(teamId)
+                .name(name)
+                .position(position)
+                .createdAt(createdAt)
+                .build();
+    }
 }

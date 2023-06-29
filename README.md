@@ -5,7 +5,9 @@
 ## - 맡은 업무
 >### 길민준
 1. 깃 레포지토리, 프로젝트 생성 및 기본 구성
-2. Player, OutPlayer - Model, DTO, DAO, Service 클래스 작성
+2. 테이블 설계 및 기능 별 쿼리 작성
+3. 코드 병합, 컨벤션
+4. Player, OutPlayer - Model, DTO, DAO, Service 클래스 작성
    1. PlayerDao
       1. 싱글톤
       2. DBConnection
@@ -43,7 +45,7 @@
       2. 퇴출목록()
          1. Exception
             - 퇴출선수가 DB에 하나도 없는 경우
-3. BaseBallApplication 작성
+5. BaseBallApplication 작성
    1. Scanner로 입력받은 문자열 데이터 parsing 결과에 따른 메서드 호출
 
 >### 문준호
@@ -52,7 +54,7 @@
 ## - 기타
 - Controller가 과제 내용에 빠져있어서 일부러 빼고 만들었음.
 - Lombok, 어노테이션 기본적인 것은 사용하였지만 그 외에는 JDBC
-- DAO에서 예외는 throw하고 Service에서 처리함
+- DAO에서 예외는 throw하고 main에서 처리함
 ---
 
 ## - QUERY SET
