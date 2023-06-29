@@ -12,7 +12,6 @@ public class Player {
     private Integer teamId;
     private String name;
     private String position;
-//    private Status status;
     private Timestamp createdAt;
 
     @Builder
@@ -21,21 +20,13 @@ public class Player {
             Integer teamId,
             String name,
             String position,
-//            Status status,
             Timestamp createdAt
     ) {
         this.id = id;
         this.teamId = teamId;
         this.name = name;
         this.position = position;
-//        this.status = status;
         this.createdAt = createdAt;
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    public enum Status {
-        RETIRED, RUN
     }
 
 //    @Getter

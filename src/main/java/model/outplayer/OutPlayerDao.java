@@ -2,6 +2,7 @@ package model.outplayer;
 
 import dto.outplayer.OutPlayerResponseDto;
 import dto.outplayer.OutPlayersOnlyResponseDto;
+import exception.CustomException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,24 +39,11 @@ public class OutPlayerDao {
     }
 
     // 3.7 퇴출 선수 등록
-    // TODO - 예외처리
     public OutPlayer createOutPlayer(OutPlayer outPlayer) throws SQLException {
         String query = "INSERT INTO out_player (player_id, reason, created_at) " +
                 "VALUES (?, ?, now())";
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            // null check - player_id
-            if (outPlayer.getPlayerId() == 0 || outPlayer.getPlayerId() == null) return null;
-            // null check - reason
-            if (outPlayer.getReason().isBlank() || outPlayer.getReason() == null) return null;
-
-            // duplicate check - position
-            for (OutPlayersOnlyResponseDto p : getOnlyOutPlayers()) {
-                if (outPlayer.getPlayerId() == p.getPlayerId()) {
-                    System.out.println("중복된 player_id 입니다.");
-                    return null;
-                }
-            }
             statement.setInt(1, outPlayer.getPlayerId());
             statement.setString(2, outPlayer.getReason());
 

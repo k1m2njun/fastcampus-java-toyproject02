@@ -1,5 +1,7 @@
 package model.team;
 
+import lombok.Builder;
+
 import java.sql.Timestamp;
 
 public class Team {
@@ -9,6 +11,7 @@ public class Team {
     private String name;
     private Timestamp createdAt;
 
+    @Builder
     public Team (
             Integer id,
             Integer stadiumId,
