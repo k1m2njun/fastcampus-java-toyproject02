@@ -96,6 +96,29 @@ public class PlayerDao {
         }
         return null;
     }
+    //문준호
+    public int getPlayerTeamIdByName(String playerName){
+        //1.sql
+        String query = "select team_id\n" +
+                "from player\n" +
+                "where name = ?";
+        int playerId = -1;
+        try (PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
+            ps.setString(1, playerName);
+            try (ResultSet rs = ps.executeQuery()) {//3.send ->  object type으로 리턴
+                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
+                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
+                    int teamId = rs.getInt("name");
+                    return teamId;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("플레이어 이름으로 팀아이디 검색중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;// player not found
+
+    }
 
     // 포지션별 출력용
     public List<PositionResponseDto> getPlayerPositionForEachTeam(){

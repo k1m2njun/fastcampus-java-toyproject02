@@ -50,14 +50,19 @@ public class PlayerService {
 
 
     public void 포지션별목록() {
+        if (teamDao.getTeamCount() == 0) {
+            System.out.println("팀이 존재하지 않아서 출력이 불가능합니다.");
+            return;
+        }
         System.out.println("이름옆에 숫자는 해당선수 teamId 입니다.");
 
         List<PositionResponseDto> positionList = playerDao.getPlayerPositionForEachTeam();
         String str = positionColumnNamePrint(positionList);
         System.out.println(str);
+        int teamCount = teamDao.getTeamCount();
 
         for (PositionResponseDto positionInfo : positionList) {
-            positionInfo.printPositionList();
+            positionInfo.printPositionList(teamCount);
         }
 
     }
@@ -65,37 +70,16 @@ public class PlayerService {
 
     private String positionColumnNamePrint(List<PositionResponseDto> list) {
 
+        int teamCount = teamDao.getTeamCount();
         String str = "포지션" + " \t\t";
 
-        //1. 팀 번호를 추출한다.
-        // 팀 번호를 저장하기 위한 int 배열 필요
-        String pl = list.get(0).getPlayerList();
-        String[] words = pl.split(",");
-        int n = words.length; // 팀의 개수
-
-        //2. 팀 번호를 잘라내기 위한 startIndex, endIndex 변수
-        int startIndex = -1;
-        int endIndex = -1;
-        int[] teamNumberArr = new int[n];// n = 팀 개수 의미
-        String number = null;
-        for (int i = 0; i < n; i++) {
-            startIndex = words[i].indexOf("[") + 1;
-            endIndex = words[i].indexOf("]");
-            number = words[i].substring(startIndex, endIndex);
-            teamNumberArr[i] = Integer.parseInt(number);
-        }
-
-        //3. 팀 번호를 사용해서 팀 이름 추출
-        for (int i = 0; i < n; i++) {
-            String teamName = teamDao.getTeamNameByTeamId(teamNumberArr[i]);
-            str += (teamName + "\t\t|\t\t");
+        for (int i = 1; i <= teamCount; i++) {
+            String teamName = teamDao.getTeamNameByTeamId(i);
+            str += (teamName + "[" + i + "]" + "\t\t|\t\t");
         }
         return str;
+
     }
 
-    private long countChar(String str, char ch){// stream 사용해서 , 개수 구함.
-        return str.chars()
-                .filter(c -> c == ch)
-                .count();
-    }
+
 }

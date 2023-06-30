@@ -4,7 +4,6 @@ import model.stadium.Stadium;
 import model.stadium.StadiumDao;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class StadiumService {

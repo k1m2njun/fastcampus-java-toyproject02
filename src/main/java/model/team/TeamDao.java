@@ -77,6 +77,33 @@ public class TeamDao {
         }
         return null;// team not found
     }
+
+    public int getTeamCount(){
+        //1.sql
+        String query = "SELECT name\n" +
+                "FROM team";
+        int count = 0;
+        try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
+
+            try (ResultSet rs = ps.executeQuery()) {//3. send , object type으로 리턴
+                //4. cursor while
+                while (rs.next()) {
+                    //5. mapping (db result -> model)
+                        count++;
+
+                    // 6. collect
+
+                }
+            }
+            return count;
+
+        } catch (SQLException e) {
+            System.out.println("전체 경기장 리스트 조회중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+
+    }
     public Team getTeamByName(String teamName) {
         //1.sql
         String query = "SELECT * FROM team WHERE name = ?";
