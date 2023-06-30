@@ -1,5 +1,6 @@
 package model.outplayer;
 
+import constant.Reason;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,16 @@ public class OutPlayer {
 
     private Integer id;
     private Integer playerId;
-    private String reason;
+//    private String reason;
+    private Reason reason;
     private Timestamp createdAt;
 
     @Builder
     public OutPlayer(
             Integer id,
             Integer playerId,
-            String reason,
+//            String reason,
+            Reason reason,
             Timestamp createdAt
     ) {
         this.id = id;

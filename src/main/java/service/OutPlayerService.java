@@ -1,5 +1,6 @@
 package service;
 
+import constant.Reason;
 import dto.outplayer.OutPlayerCreateRequestDto;
 import dto.outplayer.OutPlayerResponseDto;
 import dto.outplayer.OutPlayersOnlyResponseDto;
@@ -35,6 +36,7 @@ public class OutPlayerService {
 
             if (requestPlayerId == null) throw new CustomException("선수 id를 입력해주세요.");
             if (requestReason.isBlank() || requestReason == null) throw new CustomException("퇴출 사유를 입력해주세요.");
+            if (Reason.contains(requestReason) == false) throw new CustomException("등록 가능한 사유가 아닙니다.");
 
             for (OutPlayersOnlyResponseDto p : outPlayerDao.getOnlyOutPlayers()) {
                 if (requestPlayerId == p.getPlayerId()) throw new CustomException("이미 퇴출된 선수입니다.");
@@ -43,7 +45,7 @@ public class OutPlayerService {
             playerDao.teamOutPlayer(requestPlayerId); // 선수 퇴출 쿼리
 
             outPlayerCreateRequestDto.setPlayerId(requestPlayerId);
-            outPlayerCreateRequestDto.setReason(requestReason);
+            outPlayerCreateRequestDto.setReason(Reason.valueOf(requestReason));
 
             System.out.println(outPlayerDao.createOutPlayer(outPlayerCreateRequestDto.toModel()).toString()); // 퇴출 선수 등록 쿼리
             System.out.println("성공");

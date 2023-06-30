@@ -57,15 +57,15 @@ public class TeamDao {
     public Team getTeamByName(String teamName) throws SQLException{
         String query = "SELECT * FROM team WHERE name = ?";
 
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, teamName);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return buildTeamFromResultSet(rs);
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, teamName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return buildTeamFromResultSet(resultSet);
                 }
             }
         }
-        return null;// team not found
+        return null;
     }
 
     public List<TeamResponseDto> getAllTeam() throws SQLException{
@@ -82,16 +82,16 @@ public class TeamDao {
                 "s.created_at\n" +
                 "FROM  team t\n" +
                 "INNER JOIN stadium s ON t.stadium_id = s.id;";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
                     TeamResponseDto teamRespDto = new TeamResponseDto(
-                            rs.getInt("t.id"),
-                            rs.getString("t.name"),
-                            rs.getTimestamp("t.created_at"),
-                            rs.getInt("t.stadium_id"),
-                            rs.getString("s.name"),
-                            rs.getTimestamp("s.created_at")
+                            resultSet.getInt("t.id"),
+                            resultSet.getString("t.name"),
+                            resultSet.getTimestamp("t.created_at"),
+                            resultSet.getInt("t.stadium_id"),
+                            resultSet.getString("s.name"),
+                            resultSet.getTimestamp("s.created_at")
                     );
                     teamList.add(teamRespDto);
                 }

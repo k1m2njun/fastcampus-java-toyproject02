@@ -1,5 +1,6 @@
 package model.outplayer;
 
+import constant.Reason;
 import dto.outplayer.OutPlayerResponseDto;
 import dto.outplayer.OutPlayersOnlyResponseDto;
 import exception.CustomException;
@@ -45,7 +46,7 @@ public class OutPlayerDao {
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, outPlayer.getPlayerId());
-            statement.setString(2, outPlayer.getReason());
+            statement.setString(2, outPlayer.getReason().name());
 
             int rowCount = statement.executeUpdate();
 
@@ -95,7 +96,8 @@ public class OutPlayerDao {
     private OutPlayer buildOutPlayerFromResultSet(ResultSet resultSet) throws SQLException {
         int id = resultSet.getInt("id");
         int playerId = resultSet.getInt("player_id");
-        String reason = resultSet.getString("reason");
+        Reason reason = Reason.valueOf(resultSet.getString("reason"));
+//        String reason = resultSet.getString("reason");
         Timestamp createdAt = resultSet.getTimestamp("created_at");
 
         return OutPlayer.builder()

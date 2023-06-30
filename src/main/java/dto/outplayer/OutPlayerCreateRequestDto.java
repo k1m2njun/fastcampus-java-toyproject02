@@ -1,5 +1,6 @@
 package dto.outplayer;
 
+import constant.Reason;
 import lombok.Getter;
 import lombok.Setter;
 import model.outplayer.OutPlayer;
@@ -11,7 +12,8 @@ import java.sql.Timestamp;
 @Getter
 public class OutPlayerCreateRequestDto {
     private Integer playerId;
-    private String reason;
+//    private String reason;
+    private Reason reason;
     private Timestamp createdAt;
 
     public OutPlayer toModel() {
