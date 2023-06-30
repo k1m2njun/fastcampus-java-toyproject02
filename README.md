@@ -49,7 +49,9 @@
    1. Scanner로 입력받은 문자열 데이터 parsing 결과에 따른 메서드 호출
 
 >### 문준호
-
+1. 테이블 설계 및 기능 별 쿼리 작성
+2. Team, Stadium - Model, DTO, DAO, Service 클래스 작성
+3. 3.9 포지션 별 팀 선수 페이지
 ---
 ## - 기타
 - Controller가 과제 내용에 빠져있어서 일부러 빼고 만들었음.

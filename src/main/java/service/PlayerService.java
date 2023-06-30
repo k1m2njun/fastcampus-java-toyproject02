@@ -40,6 +40,7 @@ public class PlayerService {
                     playerResponseList = playerDao.getPlayersByTeam(requestTeamId);
                 }
             }
+
             if (playerResponseList == null) throw new CustomException("해당 팀은 DB에 존재하지 않습니다.");
 
             if (requestTeamId == null) throw new CustomException("팀 id를 입력해주세요.");
@@ -52,7 +53,6 @@ public class PlayerService {
                     (requestPosition.equals(p.getPosition()))
                 ) throw new CustomException("요청한 팀에 이미 해당 포지션의 선수가 존재합니다.");
             }
-
             playerCreateRequestDto.setTeamId(requestTeamId);
             playerCreateRequestDto.setName(requestName);
             playerCreateRequestDto.setPosition(requestPosition);
