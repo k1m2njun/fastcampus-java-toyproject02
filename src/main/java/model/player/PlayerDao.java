@@ -58,7 +58,7 @@ public class PlayerDao {
     // 3.5 선수 등록, Service 분리
     public Player createPlayer(Player player) throws SQLException {
         String query = "INSERT INTO player (team_id, name, position, created_at) " +
-                "VALUES (?, ?, ?, now())";
+                "VALUES (?, ?, 1, 하하, ?, now())";
         try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setInt(1, player.getTeamId());
