@@ -89,7 +89,7 @@ public class PlayerService {
         //3. 팀 번호를 사용해서 팀 이름 추출
         for (int i = 0; i < n; i++) {
             String teamName = teamDao.getTeamNameByTeamId(teamNumberArr[i]);
-            str += (teamName + "\t|\t");
+            str += (teamName + "[" + teamNumberArr[i] + "]" + "\t\t|\t\t");
         }
         return str;
     }

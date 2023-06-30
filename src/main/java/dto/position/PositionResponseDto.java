@@ -33,7 +33,7 @@ public class PositionResponseDto {
 
         System.out.print(position +" \t\t");
         for (String s: words){
-            System.out.print(s+"\t|\t");
+            System.out.print(s+"\t\t|\t\t");
         }
         System.out.println();
 
