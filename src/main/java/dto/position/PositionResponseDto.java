@@ -30,13 +30,15 @@ public class PositionResponseDto {
         String p = position;
         String list = playerList;
         String[] words = list.split(",");
+
         System.out.print(
                 position
-                +"\t"
+                +" \t\t"
         );
         for (String s: words){
-
+            System.out.print(s+"\t|\t");
         }
+        System.out.println();
 
     }
 }

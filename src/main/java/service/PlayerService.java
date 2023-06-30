@@ -48,14 +48,13 @@ public class PlayerService {
         }
     }
 
-    //
+
     public void 포지션별목록(){
         List<PositionResponseDto> positionList = playerDao.getPlayerPositionForEachTeam();
 
         for(PositionResponseDto positionInfo:positionList){
-            System.out.println(positionInfo);
+            positionInfo.printPositionList();
         }
-
 
 
     }

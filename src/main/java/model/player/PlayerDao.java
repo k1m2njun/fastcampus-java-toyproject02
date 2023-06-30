@@ -104,7 +104,7 @@ public class PlayerDao {
         //1. sql -> query 파라미터 사용
         String query = "SELECT\n" +
                 "position\n" +
-                ",GROUP_CONCAT(player.name)\n" +
+                ",GROUP_CONCAT(player.name,'[',player.team_id,']')\n" +
                 "FROM player\n" +
                 "GROUP BY position";
         try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
@@ -115,7 +115,7 @@ public class PlayerDao {
                     //5. mapping (db result -> model)
                     PositionResponseDto positionResponseDto = new PositionResponseDto(
                             rs.getString("position"),
-                            rs.getString("GROUP_CONCAT(player.name)")
+                            rs.getString("GROUP_CONCAT(player.name,'[',player.team_id,']')")
                     );
                     // 6. collect
                     positionList.add(positionResponseDto);
