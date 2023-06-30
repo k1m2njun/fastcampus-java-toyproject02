@@ -19,13 +19,14 @@ public class BaseBallApplication {
         Connection connection = DBConnection.getInstance();
         //-------------------------------------------------//
         playerDao.connectDB(connection);
-        PlayerService playerService = new PlayerService(playerDao);
 
 
         //------------------------------------------------//
         StadiumDao stadiumDao = new StadiumDao(connection);
         TeamDao teamDao = new TeamDao(connection);
         OutPlayerDao outPlayerDao = new OutPlayerDao(connection);
+
+        PlayerService playerService = new PlayerService(playerDao,teamDao);
 
 
         //------------------------------------------------//

@@ -57,7 +57,7 @@ public class TeamDao {
         return null;// team not found
     }
 
-    public Team getTeamNameById(int teamId){
+    public String getTeamNameByTeamId(int teamId){
         //1.sql
         String query = "select *\n" +
                 "from team\n" +
@@ -67,7 +67,8 @@ public class TeamDao {
             try (ResultSet rs = ps.executeQuery()) {//3.send ->  object type으로 리턴
                 //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
                 if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
-                    return buildTeamFromResultSet(rs);
+                    String teamName = rs.getString("name");// 팀 이름
+                    return teamName;
                 }
             }
         } catch (SQLException e) {
