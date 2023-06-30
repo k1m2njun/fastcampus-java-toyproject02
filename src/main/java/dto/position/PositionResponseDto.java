@@ -32,7 +32,10 @@ public class PositionResponseDto {
         String[] words = list.split(",");
 
         System.out.print(position +" \t\t");
-        for (String s: words){
+        for (String s: words){// 내가 착각한것 : 공백이 있을것으로 예상했으나 없었음.
+            if(s.equals(" ")){
+                s=" [공석] ";
+            }
             System.out.print(s+"\t\t|\t\t");
         }
         System.out.println();

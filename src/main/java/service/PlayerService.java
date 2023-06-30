@@ -69,8 +69,7 @@ public class PlayerService {
 
         //1. 팀 번호를 추출한다.
         // 팀 번호를 저장하기 위한 int 배열 필요
-        String playerList = list.get(0).getPlayerList();
-        String pl = playerList;
+        String pl = list.get(0).getPlayerList();
         String[] words = pl.split(",");
         int n = words.length; // 팀의 개수
 
@@ -89,8 +88,14 @@ public class PlayerService {
         //3. 팀 번호를 사용해서 팀 이름 추출
         for (int i = 0; i < n; i++) {
             String teamName = teamDao.getTeamNameByTeamId(teamNumberArr[i]);
-            str += (teamName + "[" + teamNumberArr[i] + "]" + "\t\t|\t\t");
+            str += (teamName + "\t\t|\t\t");
         }
         return str;
+    }
+
+    private long countChar(String str, char ch){// stream 사용해서 , 개수 구함.
+        return str.chars()
+                .filter(c -> c == ch)
+                .count();
     }
 }
