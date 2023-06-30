@@ -1,6 +1,7 @@
 package model.team;
 
-import model.stadium.Stadium;
+import dto.position.PositionResponseDto;
+import dto.team.TeamResponseDto;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -56,6 +57,26 @@ public class TeamDao {
         return null;// team not found
     }
 
+    public String getTeamNameByTeamId(int teamId){
+        //1.sql
+        String query = "select *\n" +
+                "from team\n" +
+                "where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
+            ps.setInt(1, teamId);
+            try (ResultSet rs = ps.executeQuery()) {//3.send ->  object type으로 리턴
+                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
+                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
+                    String teamName = rs.getString("name");// 팀 이름
+                    return teamName;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("teamId로 팀 이름 검색중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;// team not found
+    }
     public Team getTeamByName(String teamName) {
         //1.sql
         String query = "SELECT * FROM team WHERE name = ?";
@@ -75,9 +96,9 @@ public class TeamDao {
 
     }
 
-    public List<TeamRespDto> getAllTeam() {
+    public List<TeamResponseDto> getAllTeam() {
         //0. collection
-        List<TeamRespDto> teamList = new ArrayList<>();
+        List<TeamResponseDto> teamList = new ArrayList<>();
 
         //1. sql
         String query = "SELECT \n" +
@@ -88,14 +109,14 @@ public class TeamDao {
                 "s.name,\n" +
                 "s.created_at\n" +
                 "FROM  team t\n" +
-                "INNER JOIN stadium s ON t.stadium_id = s.id;";
+                "INNER JOIN stadium s ON t.stadium_id = s.id";
         try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
 
             try (ResultSet rs = ps.executeQuery()) {//3. send , object type으로 리턴
                 //4. cursor while
                 while (rs.next()) {
                     //5. mapping (db result -> model)
-                    TeamRespDto teamRespDto = new TeamRespDto(
+                    TeamResponseDto teamResponseDto = new TeamResponseDto(
                             rs.getInt("t.id"),
                             rs.getString("t.name"),
                             rs.getTimestamp("t.created_at"),
@@ -104,7 +125,7 @@ public class TeamDao {
                             rs.getTimestamp("s.created_at")
                     );
                     // 6. collect
-                    teamList.add(teamRespDto);
+                    teamList.add(teamResponseDto);
                 }
             }
             return teamList;
@@ -113,7 +134,7 @@ public class TeamDao {
             System.out.println("전체 경기장 리스트 조회중 에러발생 : " + e.getMessage());
             e.printStackTrace();
         }
-        return teamList;
+        return null;
     }
 
     private Team buildTeamFromResultSet(ResultSet rs) throws SQLException {
