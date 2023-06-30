@@ -33,7 +33,7 @@ public class StadiumDao {
         return null;// 계좌 입력 실패
     }
 
-    public List<Stadium> getAllStadium() throws SQLException {
+    public List<Stadium> getAllStadium(){
         //0. collection
         List<Stadium> stadiumList = new ArrayList<>();
         //1. sql

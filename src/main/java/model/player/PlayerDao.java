@@ -2,6 +2,7 @@ package model.player;
 
 import dto.player.PlayerCreateRequestDto;
 import dto.player.PlayerGetResponseDto;
+import dto.position.PositionResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ public class PlayerDao {
     private Connection connection;
     private PlayerGetResponseDto playerGetResponseDto;
     private PlayerCreateRequestDto playerCreateRequestDto;
+
 
     // PlayerDao Singleton
     private static class singleInstanceHolder {
@@ -94,6 +96,43 @@ public class PlayerDao {
         }
         return null;
     }
+
+    // 포지션별 출력용
+    public List<PositionResponseDto> getPlayerPositionForEachTeam(){
+        //0. collection
+        List<PositionResponseDto> positionList = new ArrayList<>();
+        //1. sql -> query 파라미터 사용
+        String query = "SELECT\n" +
+                "position\n" +
+                ",GROUP_CONCAT(player.name)\n" +
+                "FROM player\n" +
+                "GROUP BY position";
+        try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
+
+            try (ResultSet rs = ps.executeQuery()) {//3. send , object type으로 리턴
+                //4. cursor while
+                while (rs.next()) {
+                    //5. mapping (db result -> model)
+                    PositionResponseDto positionResponseDto = new PositionResponseDto(
+                            rs.getString("position"),
+                            rs.getString("GROUP_CONCAT(player.name)")
+                    );
+                    // 6. collect
+                    positionList.add(positionResponseDto);
+                }
+            }
+            return positionList;
+
+        } catch (SQLException e) {
+            System.out.println("전체 경기장 리스트 조회중 에러발생 : " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("getPlayerPositionForEachTeam 메서드에서 null 반환");
+        return null;
+
+
+    }
+
 //    public Player createPlayer(
 //            Integer teamId,
 //            String name,
@@ -145,6 +184,10 @@ public class PlayerDao {
 //        }
 //        return playerList;
 //    }
+
+    // 포지션별 팀
+
+
     public List<Player> getPlayersByTeam(int teamId) throws SQLException {
         List<Player> playerResponseList = new ArrayList<>();
         String query = "SELECT id, name, position, created_at FROM player WHERE team_id = ?";

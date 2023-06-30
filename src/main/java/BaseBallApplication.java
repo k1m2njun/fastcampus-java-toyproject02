@@ -111,8 +111,7 @@ public class BaseBallApplication {
                     continue;
                 }
                 if (order.equals("포지션별목록")) {//10.요청 : 포지션별목록
-
-
+                    playerService.포지션별목록();
                     continue;
                 }
             } catch (SQLException e) {

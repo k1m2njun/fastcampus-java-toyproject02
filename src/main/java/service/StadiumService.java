@@ -31,7 +31,7 @@ public class StadiumService {
         return stadium;
     }
 
-    public void getStadiumList() throws SQLException {
+    public void getStadiumList(){
 
         List<Stadium> stadiumList = stadiumDao.getAllStadium();
         if(stadiumList == null){

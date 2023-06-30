@@ -1,5 +1,6 @@
 package service;
 
+import dto.position.PositionResponseDto;
 import model.stadium.StadiumDao;
 import model.team.Team;
 import model.team.TeamDao;
@@ -67,11 +68,5 @@ public class TeamService {
         }
         return;
     }
-
-
-
-
-
-
 
 }
