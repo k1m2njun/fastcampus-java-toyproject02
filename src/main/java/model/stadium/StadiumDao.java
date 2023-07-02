@@ -1,5 +1,7 @@
 package model.stadium;
 
+
+import dto.stadium.StadiumGetResponseDto;
 import lombok.Getter;
 
 import java.sql.*;
@@ -11,93 +13,75 @@ public class StadiumDao {
 
     private Connection connection;
 
-    public StadiumDao(Connection connection) {
+    private static class singleInstanceHolder {
+        private static final StadiumDao INSTANCE = new StadiumDao();
+    }
+
+    public static StadiumDao getInstance() {
+        return StadiumDao.singleInstanceHolder.INSTANCE;
+    }
+
+    public void connectDB(Connection connection) {
         this.connection = connection;
     }
 
     // insert method
-    public Stadium createStadium(String stadiumName) {
+    public Stadium createStadium(String stadiumName) throws SQLException {
         String query = "INSERT INTO stadium(name, created_at) VALUES(?, now())";
-        if (getStadiumByName(stadiumName)==null){// 없는 경기장이면 null 반환, -> 중복된 경기장이 아니면 insert
-            try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setString(1, stadiumName);
-                int rowCount = ps.executeUpdate();
+        if (getStadiumByName(stadiumName) == null){
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setString(1, stadiumName);
+                int rowCount = statement.executeUpdate();
                 if (rowCount > 0) {
                     return getStadiumByName(stadiumName);
                 }
-            } catch (SQLException e) {
-                System.out.println("경기장 등록과정에서 Exception 발생 : " + e.getMessage());
-                e.printStackTrace();
             }
         }
-        return null;// 계좌 입력 실패
+        return null;
     }
 
-    public List<Stadium> getAllStadium(){
-        //0. collection
+    public List<Stadium> getAllStadium() throws SQLException {
         List<Stadium> stadiumList = new ArrayList<>();
-        //1. sql
         String query = "SELECT * FROM stadium";
-        try (PreparedStatement ps = connection.prepareStatement(query)){ //2. buffer
+        try (PreparedStatement statement = connection.prepareStatement(query)){
+            try(ResultSet resultSet = statement.executeQuery()){
 
-            try(ResultSet rs = ps.executeQuery()){//3. send , object type으로 리턴
-                //4. cursor while
-                while (rs.next()) {
-                    //5. mapping (db result -> model)
-                    Stadium stadium = new Stadium(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getTimestamp("created_at")
-                    );
-                    // 6. collect
-                    stadiumList.add(stadium);
+                while (resultSet.next()) {
+                    Stadium stadiumResponse = StadiumGetResponseDto.buildStadiumFromResultSet(resultSet);
+                    stadiumList.add(stadiumResponse);
                 }
             }
-            return stadiumList;
-
-        } catch (SQLException e) {
-            System.out.println("전체 경기장 리스트 조회중 에러발생 : " + e.getMessage());
-            e.printStackTrace();
         }
         return stadiumList;
     }
 
-    public Stadium getStadiumById(int stadiumPrimaryKeyId){
-        //1.sql
-        String query = "SELECT * FROM stadium Where id = ?";
 
-        try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
-            ps.setInt(1, stadiumPrimaryKeyId);
-            try(ResultSet rs = ps.executeQuery()){//3.send ->  object type으로 리턴
-                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
-                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
-                    return buildStadiumFromResultSet(rs);
+    public Stadium getStadiumById(int id) throws SQLException {
+        String query = "SELECT * FROM stadium WHERE id = ?";
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            try(ResultSet resultSet = statement.executeQuery()){
+
+                if (resultSet.next()) {
+                    return StadiumGetResponseDto.buildStadiumFromResultSet(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("경기장 id 검색중 에러발생 : " + e.getMessage());
-            e.printStackTrace();
         }
-        return null;// stadium not found
+        return null;
     }
 
-    public Stadium getStadiumByName(String stadiumName) {
-        //1.sql
+    public Stadium getStadiumByName(String stadiumName) throws SQLException{
         String query = "SELECT * FROM stadium Where name = ?";
 
-        try(PreparedStatement ps = connection.prepareStatement(query)) {//2.buffer에 넣고
-            ps.setString(1, stadiumName);
-            try(ResultSet rs = ps.executeQuery()){//3.send ->  object type으로 리턴
-                //4.mapping( db result -> model) 결과는 테이블 데이터임. 이걸 자바로 매칭해주는것이 필요
-                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
-                    return buildStadiumFromResultSet(rs);
+        try(PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, stadiumName);
+            try(ResultSet resultSet = statement.executeQuery()){
+                if (resultSet.next()) {
+                    return StadiumGetResponseDto.buildStadiumFromResultSet(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("경기장 이름 검색중 에러발생 : " + e.getMessage());
-            e.printStackTrace();
         }
-        return null;// stadium not found
+        return null;
     }
 
     private Stadium buildStadiumFromResultSet(ResultSet rs) throws SQLException {

@@ -2,8 +2,13 @@ package dto.team;
 
 import lombok.Getter;
 
+import lombok.ToString;
+
 import java.sql.Timestamp;
+
 @Getter
+@ToString
+
 public class TeamResponseDto {
     private Integer teamId;
     private String teamName;
@@ -12,7 +17,15 @@ public class TeamResponseDto {
     private String teamStadiumName;
     private Timestamp teamStadiumCreatedAt;
 
-    public TeamResponseDto(Integer teamId, String teamName, Timestamp teamCreatedAt, Integer teamStadiumId, String teamStadiumName, Timestamp teamStadiumCreatedAt) {
+
+    public TeamResponseDto(
+            Integer teamId,
+            String teamName,
+            Timestamp teamCreatedAt,
+            Integer teamStadiumId,
+            String teamStadiumName,
+            Timestamp teamStadiumCreatedAt) {
+
         this.teamId = teamId;
         this.teamName = teamName;
         this.teamCreatedAt = teamCreatedAt;
@@ -20,18 +33,5 @@ public class TeamResponseDto {
         this.teamStadiumName = teamStadiumName;
         this.teamStadiumCreatedAt = teamStadiumCreatedAt;
     }
-
-    @Override
-    public String toString() {
-        return "TeamInfo{" +
-                "teamId=" + teamId +
-                ", teamName='" + teamName + '\'' +
-                ", teamCreatedAt=[" + teamCreatedAt +
-                "], teamStadiumId=" + teamStadiumId +
-                ", teamStadiumName='" + teamStadiumName + '\'' +
-                ", teamStadiumCreatedAt=[" + teamStadiumCreatedAt +
-                "]}";
-    }
-
 
 }
