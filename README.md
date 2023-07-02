@@ -81,7 +81,7 @@
       1. 포지션별목록()
       2. positionColumnNamePrint(List<PositionResponseDto> list)
    7. TeamResponseDto Class
-5. pivot DB, PositionResponseDto Class
+4. pivot DB, PositionResponseDto Class
    1. pivot DB를 동적쿼리를 작성하려고 했으나, 동적쿼리를 배워서 프로젝트에 적용하는데 시간이 많이 소요될것으로 판단하여 자바로 파싱 -> 동적쿼리를 배워봐야겠습니다.
 
 
