@@ -1,68 +1,74 @@
 package service;
 
+
+import dto.outplayer.OutPlayerCreateRequestDto;
 import dto.outplayer.OutPlayerResponseDto;
+import dto.outplayer.OutPlayersOnlyResponseDto;
+import exception.CustomException;
 import model.outplayer.OutPlayerDao;
 import model.player.Player;
 import model.player.PlayerDao;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public class OutPlayerService {
 
-    private OutPlayerDao outPlayerDao;
-    private PlayerDao playerDao;
-    private Connection connection;
 
-    public OutPlayerService(OutPlayerDao outPlayerDao, PlayerDao playerDao, Connection connection) {
+    private PlayerDao playerDao;
+    private OutPlayerDao outPlayerDao;
+    private OutPlayerCreateRequestDto outPlayerCreateRequestDto;
+
+    public OutPlayerService(OutPlayerDao outPlayerDao, PlayerDao playerDao) {
         this.outPlayerDao = outPlayerDao;
         this.playerDao = playerDao;
-        this.connection = connection;
+        this.outPlayerCreateRequestDto = new OutPlayerCreateRequestDto();
     }
 
+    public void 퇴출등록(String requestData) throws SQLException, RuntimeException { // 퇴출등록?playerId=1&reason=도박
 
-    public void registerOutPlayer(int playerId, String reason){
-        try{
-            Player p = playerDao.getPlayerById(playerId);
-            if(p==null){// 플레이어를 찾지 못함.
-                System.out.println("playerId를 통해 플레이어를 찾지 못했습니다.");
-                return;
+        try {
+            String[] requestDataList = requestData.split("&");
+            Integer requestPlayerId = Integer.parseInt(requestDataList[0].split("=")[1]);
+            String requestReason = requestDataList[1].split("=")[1];
+
+            Player player = playerDao.getPlayerById(requestPlayerId);
+            if (player == null) throw new CustomException("요청한 id(" + requestPlayerId + ")의 선수가 없습니다.");
+
+            if (requestPlayerId == null) throw new CustomException("선수 id를 입력해주세요.");
+            if (requestReason.isBlank() || requestReason == null) throw new CustomException("퇴출 사유를 입력해주세요.");
+
+            for (OutPlayersOnlyResponseDto p : outPlayerDao.getOnlyOutPlayers()) {
+                if (requestPlayerId == p.getPlayerId()) throw new CustomException("이미 퇴출된 선수입니다.");
             }
-            if(p.getTeamId()==null){// 이미 방출된 선수입니다.
-                System.out.println("이미 방출된 선수입니다.");
-                return;
-            }
-            //팀 아웃되는 선수 team_id = null 처리
-            playerDao.teamOutPlayer(playerId);
 
-            //팀 아웃 선수를 out_player 목록에 넣기
-            outPlayerDao.createOutPlayer(playerId, reason);
+            playerDao.teamOutPlayer(requestPlayerId); // 선수 퇴출 쿼리
 
-        }catch (SQLException e){
-            e.printStackTrace();
+            outPlayerCreateRequestDto.setPlayerId(requestPlayerId);
+            outPlayerCreateRequestDto.setReason(requestReason);
+
+            System.out.println(outPlayerDao.createOutPlayer(outPlayerCreateRequestDto.toModel()).toString()); // 퇴출 선수 등록 쿼리
+            System.out.println("성공");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.getMessage();
         }
     }
 
+    public void 퇴출목록() throws SQLException, RuntimeException {
 
-    public void getOutPlayerList(){
+        try {
+            List<OutPlayerResponseDto> outPlayerResponseList = outPlayerDao.getAllOutPlayers();
 
-        List<OutPlayerResponseDto> outPlayerResponseDtoList = outPlayerDao.getAllPlayerAndOutPlayerList();
-        for(OutPlayerResponseDto oprd : outPlayerResponseDtoList){
-            System.out.print(
-                    " playerId = " + oprd.getPlayerId()
-                     +" playerName = "+ oprd.getPlayerName()
-                     +" playerPosition = "+ oprd.getPlayerPosition()
-            );
-            if(oprd.getOutPlayerReason()==null){
-                System.out.println();
-                continue;
+            if (outPlayerResponseList.size() == 0) throw new CustomException("퇴출 선수가 없습니다.");
+
+            for(OutPlayerResponseDto outPlayerResponse : outPlayerResponseList) {
+                System.out.println(outPlayerResponse.toString());
             }
-            System.out.println(
-                    " outPlayerReason(이유) = " + oprd.getOutPlayerReason()
-                            +" outPlayerCreatedAt(퇴출일) = "+ oprd.getOutPlayerCreatedAt()
-            );
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.getMessage();
         }
-        return;
+
     }
 }

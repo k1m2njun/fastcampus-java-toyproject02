@@ -1,47 +1,45 @@
 package service;
 
+
+import exception.CustomException;
 import model.stadium.Stadium;
 import model.stadium.StadiumDao;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public class StadiumService {
-
     private StadiumDao stadiumDao;
 
-    private Connection connection;
-
-    public StadiumService(StadiumDao stadiumDao, Connection connection) {
+    public StadiumService(StadiumDao stadiumDao) {
         this.stadiumDao = stadiumDao;
-        this.connection = connection;
     }
 
-    public Stadium registerNewStadium(String stadiumName){
-        Stadium stadium = stadiumDao.createStadium(stadiumName);
+    // 야구장등록?name=잠실야구장
+    public void 야구장등록(String requestData) throws SQLException, RuntimeException {
+        try {
+            String requestName = requestData.split("=")[1];
 
-        //기존에 있는 경기장인지 확인
-        if(stadium!=null){
-            System.out.println("야구장 등록 성공");
-        }else{// 중복된 경우
-            System.out.println("이미 등록된 경기장입니다.");
+            if(stadiumDao.getStadiumByName(requestName) != null) throw new CustomException("이미 등록된 경기장입니다.");
+
+            System.out.println(stadiumDao.createStadium(requestName).toString());
+            System.out.println("성공");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-
-        return stadium;
     }
 
-    public void getStadiumList(){
+    public void 야구장목록() throws SQLException, RuntimeException {
+        try {
+            List<Stadium> stadiumList = stadiumDao.getAllStadium();
+            if(stadiumList == null) throw new CustomException("등록된 경기장이 없습니다.");
+            for(Stadium s : stadiumList){
+                System.out.println(s.toString());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
-        List<Stadium> stadiumList = stadiumDao.getAllStadium();
-        if(stadiumList == null){
-            System.out.println("등록된 경기장이 없습니다.");
-            return;
-        }
-        for(Stadium s : stadiumList){
-            System.out.println(s);
-        }
-        return;
+
     }
-
 }

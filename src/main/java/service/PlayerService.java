@@ -3,6 +3,7 @@ package service;
 import dto.player.PlayerCreateRequestDto;
 import dto.player.PlayerGetResponseDto;
 import dto.position.PositionResponseDto;
+import exception.CustomException;
 import model.player.Player;
 import model.player.PlayerDao;
 import model.team.TeamDao;
@@ -16,86 +17,109 @@ public class PlayerService {
     private PlayerDao playerDao;
     private TeamDao teamDao;
 
-    public PlayerService(PlayerDao playerDao, TeamDao teamDao) {
+    public PlayerService(
+            PlayerDao playerDao,
+            TeamDao teamDao
+    ) {
         this.playerCreateRequestDto = new PlayerCreateRequestDto();
         this.playerGetResponseDto = new PlayerGetResponseDto();
         this.playerDao = playerDao;
         this.teamDao = teamDao;
     }
 
-    public void 선수등록(String requestData) throws SQLException {
 
-        String[] requestDataList = requestData.split("&");
-        Integer requestTeamId = Integer.parseInt(requestDataList[0].split("=")[1]); // teamId=1
-        String requestName = requestDataList[1].split("=")[1]; // name=이대호
-        String requestPosition = requestDataList[2].split("=")[1]; // position=1루수
 
-        playerCreateRequestDto.setTeamId(requestTeamId);
-        playerCreateRequestDto.setName(requestName);
-        playerCreateRequestDto.setPosition(requestPosition);
+    public void 선수등록(String requestData) throws RuntimeException, SQLException{ // 선수등록?teamId=1&name=이대호&position=1루수
+        try {
+            String[] requestDataList = requestData.split("&");
 
-        System.out.println(playerDao.createPlayer(playerCreateRequestDto.toModel()).toString());
-        System.out.println("성공");
-    }
+            Integer requestTeamId = Integer.parseInt(requestDataList[0].split("=")[1]); // teamId=1
+            String requestName = requestDataList[1].split("=")[1]; // name=이대호
+            String requestPosition = requestDataList[2].split("=")[1]; // position=1루수
 
-    public void 선수목록(String requestData) throws SQLException {
+            List<Player> playerResponseList = null;
+            for(int teamId : teamDao.getAllTeamId()) {
+                if(teamId == requestTeamId) {
+                    playerResponseList = playerDao.getPlayersByTeam(requestTeamId);
+                }
+            }
+            if (playerResponseList == null) throw new CustomException("해당 팀은 DB에 존재하지 않습니다.");
 
-        Integer requestTeamId = Integer.parseInt(requestData.split("=")[1]); // teamId=1
+            if (requestTeamId == null) throw new CustomException("팀 id를 입력해주세요.");
+            if (requestName.isBlank() || requestName == null) throw new CustomException("이름을 입력해주세요.");
+            if (requestPosition.isBlank() || requestPosition == null) throw new CustomException("포지션을 입력해주세요.");
+            for (Player p : playerDao.getAllPlayers()) {
+                if (
+                    (p.getTeamId() != null) &&
+                    (requestTeamId == p.getTeamId()) &&
+                    (requestPosition.equals(p.getPosition()))
+                ) throw new CustomException("요청한 팀에 이미 해당 포지션의 선수가 존재합니다.");
+            }
 
-        List<Player> playerResponseList = playerDao.getPlayersByTeam(requestTeamId);
-        for (Player playerResponse : playerResponseList) {
-            System.out.println(playerResponse.toString());
+            playerCreateRequestDto.setTeamId(requestTeamId);
+            playerCreateRequestDto.setName(requestName);
+            playerCreateRequestDto.setPosition(requestPosition);
+
+            System.out.println(playerDao.createPlayer(playerCreateRequestDto.toModel()).toString());
+            System.out.println("성공");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
+    public void 선수목록(String requestData) throws RuntimeException, SQLException {
 
-    public void 포지션별목록() {
+        try {
+            Integer requestTeamId = Integer.parseInt(requestData.split("=")[1]);
+            List<Player> playerResponseList = null;
+
+            for(int teamId : teamDao.getAllTeamId()) {
+                if(teamId == requestTeamId) {
+                    playerResponseList = playerDao.getPlayersByTeam(requestTeamId);
+                }
+            }
+            if(playerResponseList == null) throw new CustomException("해당 팀은 DB에 존재하지 않습니다.");
+            if(playerResponseList.isEmpty()) throw new CustomException("해당 팀은 선수가 존재하지 않습니다.");
+
+            for(Player playerResponse : playerResponseList) {
+                System.out.println(playerResponse.toString());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void 포지션별목록() throws SQLException {
+        if (teamDao.getTeamCount() == 0) {
+            System.out.println("팀이 존재하지 않아서 출력이 불가능합니다.");
+            return;
+        }
         System.out.println("이름옆에 숫자는 해당선수 teamId 입니다.");
 
         List<PositionResponseDto> positionList = playerDao.getPlayerPositionForEachTeam();
         String str = positionColumnNamePrint(positionList);
-        System.out.println(str);
+        System.out.println(str);// column 이름 출력 포지션 + 팀 이름
+
+        int teamCount = teamDao.getTeamCount();
 
         for (PositionResponseDto positionInfo : positionList) {
-            positionInfo.printPositionList();
+            positionInfo.printPositionList(teamCount);
         }
 
     }
 
 
-    private String positionColumnNamePrint(List<PositionResponseDto> list) {
+    private String positionColumnNamePrint(List<PositionResponseDto> list) throws SQLException {
 
+        int teamCount = teamDao.getTeamCount();
         String str = "포지션" + " \t\t";
 
-        //1. 팀 번호를 추출한다.
-        // 팀 번호를 저장하기 위한 int 배열 필요
-        String pl = list.get(0).getPlayerList();
-        String[] words = pl.split(",");
-        int n = words.length; // 팀의 개수
-
-        //2. 팀 번호를 잘라내기 위한 startIndex, endIndex 변수
-        int startIndex = -1;
-        int endIndex = -1;
-        int[] teamNumberArr = new int[n];// n = 팀 개수 의미
-        String number = null;
-        for (int i = 0; i < n; i++) {
-            startIndex = words[i].indexOf("[") + 1;
-            endIndex = words[i].indexOf("]");
-            number = words[i].substring(startIndex, endIndex);
-            teamNumberArr[i] = Integer.parseInt(number);
-        }
-
-        //3. 팀 번호를 사용해서 팀 이름 추출
-        for (int i = 0; i < n; i++) {
-            String teamName = teamDao.getTeamNameByTeamId(teamNumberArr[i]);
-            str += (teamName + "\t\t|\t\t");
+        for (int i = 1; i <= teamCount; i++) {
+            String teamName = teamDao.getTeamNameByTeamId(i);
+            str += (teamName + "[" + i + "]" + "\t\t|\t\t");
         }
         return str;
+
     }
 
-    private long countChar(String str, char ch){// stream 사용해서 , 개수 구함.
-        return str.chars()
-                .filter(c -> c == ch)
-                .count();
-    }
 }

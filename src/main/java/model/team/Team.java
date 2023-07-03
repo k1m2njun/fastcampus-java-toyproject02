@@ -2,11 +2,14 @@ package model.team;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
 
 @Getter
+@Setter
+@ToString
 public class Team {
 
     private Integer id;
@@ -26,13 +29,4 @@ public class Team {
         this.createdAt = createdAt;
     }
 
-    @Override
-    public String toString() {
-        return "Team{" +
-                "id=" + id +"\t\t"+
-                ", stadiumId=" + stadiumId +"\t\t"+
-                ", name='" + name +"\t\t"+
-                ", createdAt=" + createdAt +
-                '}';
-    }
 }

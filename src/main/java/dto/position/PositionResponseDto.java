@@ -24,21 +24,36 @@ public class PositionResponseDto {
                 ']';
     }
 
-    public void printPositionList(){
+    public void printPositionList(int teamCount) {
 
-
-        String p = position;
+        int teamId = -1;
         String list = playerList;
         String[] words = list.split(",");
+        int rowCount = words.length;
+        int flag = 0;
 
-        System.out.print(position +" \t\t");
-        for (String s: words){// 내가 착각한것 : 공백이 있을것으로 예상했으나 없었음.
-            if(s.equals(" ")){
-                s=" [공석] ";
+        System.out.print(position + " \t\t");
+        for (int i = 1; i <= teamCount; i++) { // 팀개수 출력
+            flag = 0;
+            for (int j = 0; j < rowCount; j++) {
+                int startIndex = words[j].indexOf("[") + 1;
+                int endIndex = words[j].indexOf("]");
+                int number = Integer.parseInt(words[j].substring(startIndex, endIndex));
+                if (number == i) {
+                    System.out.print(words[j] + "\t\t|\t\t");
+                    flag = 1;
+                    break;
+                }
             }
-            System.out.print(s+"\t\t|\t\t");
+            if(flag == 0){
+                System.out.print("  [공석]  " + "\t\t|\t\t");
+            }
         }
         System.out.println();
 
+
+
     }
+
+
 }
