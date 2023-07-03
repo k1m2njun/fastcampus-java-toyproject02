@@ -7,8 +7,6 @@ e
 5src/main/java/dto/outplayer/OutPlayerResponseDto.java,3\f\3f3593f7e691fef53e9927346d487c8f79fb2d86
 j
 :src/main/java/dto/outplayer/OutPlayersOnlyResponseDto.java,1\c\1cf891381d40ad3f4184bad6d0c127ddefd4ad08
-9
-	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 `
 0src/main/java/dto/team/TeamCreateRequestDto.java,e\a\ea7ab68057a319142206b3eaf71419ba5c1f2832
 \

@@ -9,8 +9,6 @@ j
 :src/main/java/dto/outplayer/OutPlayersOnlyResponseDto.java,1\c\1cf891381d40ad3f4184bad6d0c127ddefd4ad08
 \
 ,src/main/java/exception/CustomException.java,8\1\8111bc21f9190171d02c4f8793da6feb9f8f05d1
-9
-	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 `
 0src/main/java/dto/team/TeamCreateRequestDto.java,e\a\ea7ab68057a319142206b3eaf71419ba5c1f2832
 \
