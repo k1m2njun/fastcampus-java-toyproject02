@@ -49,9 +49,40 @@
    1. Scanner로 입력받은 문자열 데이터 parsing 결과에 따른 메서드 호출
 
 >### 문준호
-1. 테이블 설계 및 기능 별 쿼리 작성
-2. Team, Stadium - Model, DTO, DAO, Service 클래스 작성
-3. 3.9 포지션 별 팀 선수 페이지
+1. 테이블 설계 및 기능 별 쿼리 작성, ERD
+2. BaseBallApplication 작성
+3. Team, stadium - model, service, dao, dto - 클래스 작성
+   1. StadiumDao Class
+      1. DBConnection
+      2. createStadium(String stadiumName)
+      3. getAllStadium()
+      4. getStadiumById(int id)
+      5. getStadiumByName(String stadiumName)
+      6. buildStadiumFromResultSet
+   2. StadiumService Class
+      1. 야구장등록(String requestData)
+      2. 야구장목록()
+   3. TeamDao Class
+      1. DBConnection
+      2. createTeam(Team team)
+      3. getTeamByStadiumId(int stadiumId)
+      4. getTeamByName(String teamName)
+      5. getAllTeam()
+      6. buildTeamFromResultSet(ResultSet resultSet)
+      7. getAllTeamId()
+      8. getTeamCount()
+   4. TeamService Class
+      1. 팀등록(String requestData)
+      2. 팀목록()
+   5. PlayerDao Class 3.10 문제를 풀기위해
+      1. getPlayerTeamIdByName(String playerName)
+      2. getPlayerPositionForEachTeam()
+   6. PlayerService Class 3.10 문제를 풀기위해
+      1. 포지션별목록()
+      2. positionColumnNamePrint(List<PositionResponseDto> list)
+   7. TeamResponseDto Class
+4. pivot DB, PositionResponseDto Class
+   1. pivot DB를 동적쿼리를 작성하려고 했으나, 동적쿼리를 배워서 프로젝트에 적용하는데 시간이 많이 소요될것으로 판단하여 자바로 파싱 -> 동적쿼리를 배워봐야겠습니다.
 ---
 ## - 기타
 - Controller가 과제 내용에 빠져있어서 일부러 빼고 만들었음.

@@ -81,5 +81,17 @@ public class StadiumDao {
         return null;
     }
 
+    private Stadium buildStadiumFromResultSet(ResultSet resultSet) throws SQLException {
+        int stadiumId = resultSet.getInt("id");// 경기장 id
+        String stadiumName = resultSet.getString("name");// 경기장 이름
+        Timestamp stadiumTimestamp = resultSet.getTimestamp("created_at");// 경기장 등록 시간
+
+        return Stadium.builder()
+                .id(stadiumId)
+                .name(stadiumName)
+                .createdAt(stadiumTimestamp)
+                .build();
+    }
+
 
 }

@@ -60,7 +60,7 @@ public class BaseBallApplication {
                     if (request.equals("야구장목록")) stadiumService.야구장목록();
                     else if (request.equals("팀목록")) teamService.팀목록();
                     else if (request.equals("퇴출목록")) outPlayerService.퇴출목록();
-//                    else if (request.equals("포지션별목록")) outPlayerService.포지션별목록();
+                    else if (request.equals("포지션별목록")) playerService.포지션별목록();
                     else throw new CustomException("요청을 확인하세요.");
 
                     connection.commit();

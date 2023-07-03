@@ -2,6 +2,7 @@ package service;
 
 import dto.player.PlayerCreateRequestDto;
 import dto.player.PlayerGetResponseDto;
+import dto.player.PositionResponseDto;
 import exception.CustomException;
 import model.player.Player;
 import model.player.PlayerDao;
@@ -85,4 +86,41 @@ public class PlayerService {
             System.out.println(e.getMessage());
         }
     }
+
+    public void 포지션별목록() throws SQLException {
+        if (teamDao.getTeamCount() == 0) throw new CustomException("팀이 존재하지 않습니다.");
+
+        System.out.println("이름옆에 숫자는 해당선수 teamId 입니다.");
+
+        List<PositionResponseDto> positionList = playerDao.getPlayerPositionForEachTeam();
+
+        int teamCount = teamDao.getTeamCount();
+        String str = "포지션" + " \t\t";
+
+        for (int i = 1; i <= teamCount; i++) {
+            String teamName = teamDao.getTeamNameByTeamId(i);
+            str += (teamName + "[" + i + "]" + "\t\t|\t\t");
+        }
+
+        System.out.println(str);
+
+        for (PositionResponseDto positionInfo : positionList) {
+            positionInfo.printPositionList(teamCount);
+        }
+
+    }
+
+
+//    private String positionColumnNamePrint(List<PositionResponseDto> list) throws SQLException {
+//
+//        int teamCount = teamDao.getTeamCount();
+//        String str = "포지션" + " \t\t";
+//
+//        for (int i = 1; i <= teamCount; i++) {
+//            String teamName = teamDao.getTeamNameByTeamId(i);
+//            str += (teamName + "[" + i + "]" + "\t\t|\t\t");
+//        }
+//        return str;
+//
+//    }
 }  

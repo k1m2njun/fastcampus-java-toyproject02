@@ -1,6 +1,7 @@
 package model.player;
 
 import dto.player.PlayerGetResponseDto;
+import dto.player.PositionResponseDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -140,5 +141,42 @@ public class PlayerDao {
 //    }
 
     // Player response builder
+
+    /// ************************JunHoMun branch 작업 START************************//
+    //문 - 포지션별 출력용
+    public int getPlayerTeamIdByName(String playerName) throws SQLException{
+        String query = "SELECT team_id FROM player WHERE name = ?";
+        int playerId = -1;
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, playerName);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int teamId = resultSet.getInt("name");
+                    return teamId;
+                }
+            }
+        }
+        return 0;// player not found
+    }
+
+    // 문 - 포지션별 출력용
+    public List<PositionResponseDto> getPlayerPositionForEachTeam() throws SQLException{
+        List<PositionResponseDto> positionList = new ArrayList<>();
+        String query = "SELECT position ,GROUP_CONCAT(player.name,'[',player.team_id,']') " +
+                "FROM player GROUP BY position";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    PositionResponseDto positionResponseDto = new PositionResponseDto(
+                            resultSet.getString("position"),
+                            resultSet.getString("GROUP_CONCAT(player.name,'[',player.team_id,']')")
+                    );
+                    positionList.add(positionResponseDto);
+                }
+            }
+            return positionList;
+        }
+    }
+    // ************************JunHoMun branch 작업 END************************//
 
 }

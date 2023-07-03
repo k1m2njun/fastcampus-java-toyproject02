@@ -127,5 +127,34 @@ public class TeamDao {
         return teamIdList;
     }
 
+    public int getTeamCount() throws SQLException {
+        //1.sql
+        String query = "SELECT count(*) FROM team";
+        int count = 0;
+        try (PreparedStatement ps = connection.prepareStatement(query)) { //2. buffer
+            try (ResultSet rs = ps.executeQuery()) {//3. send , object type으로 리턴
+                if (rs.next()) {// 커서 내리기 -> data 가 있으면 true 리턴 없으면 , false 리턴
+                    count = rs.getInt("count(*)");
+                    return count;
+                }
+            }
+            return count;
+        }
+    }
+
+    public String getTeamNameByTeamId(int teamId) throws SQLException {
+        //1.sql
+        String query = "select * from team where id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, teamId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String teamName = rs.getString("name");
+                    return teamName;
+                }
+            }
+        }
+        return null;
+    }
 
 }
