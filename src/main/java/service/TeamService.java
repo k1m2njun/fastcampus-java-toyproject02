@@ -32,16 +32,21 @@ public class TeamService {
             Integer requestStadiumId = Integer.parseInt(requestDataList[0].split("=")[1]);
             String requestName = requestDataList[1].split("=")[1];
 
+            if (requestName.trim().length() == 0) throw new CustomException("팀 이름을 공백(space)으로 설정할 수 없습니다.");
             if (stadiumDao.getAllStadium().isEmpty()) throw new CustomException("등록된 경기장이 없습니다.");
             if (stadiumDao.getStadiumById(requestStadiumId) == null) throw new CustomException("존재하지 않는 경기장입니다.");
             if (teamDao.getTeamByName(requestName) != null) throw new CustomException("이미 존재하는 팀이름입니다.");
-            if (teamDao.getTeamByStadiumId(requestStadiumId) != null) throw new CustomException("해당 경기장에 이미 배정된 팀이 있습니다.");
+            if (teamDao.getTeamByStadiumId(requestStadiumId) != null)
+                throw new CustomException("해당 경기장에 이미 배정된 팀이 있습니다.");
+
 
             teamCreateRequestDto.setStadiumId(requestStadiumId);
             teamCreateRequestDto.setName(requestName);
 
             System.out.println(teamDao.createTeam(teamCreateRequestDto.toModel()).toString());
             System.out.println("성공");
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("팀 이름을 넣지 않으셨습니다. ");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -51,9 +56,9 @@ public class TeamService {
         try {
             List<TeamResponseDto> teamList = teamDao.getAllTeam();
 
-            if(teamList.isEmpty() || teamList == null) throw new CustomException("등록된 팀이 없습니다.");
+            if (teamList.isEmpty() || teamList == null) throw new CustomException("등록된 팀이 없습니다.");
 
-            for(TeamResponseDto trd : teamList){
+            for (TeamResponseDto trd : teamList) {
                 System.out.println(trd.toString());
             }
         } catch (Exception e) {

@@ -97,7 +97,7 @@ public class PlayerService {
         System.out.println("이름옆에 숫자는 해당선수 teamId 입니다.");
 
         List<PositionResponseDto> positionList = playerDao.getPlayerPositionForEachTeam();
-        String str = positionColumnNamePrint(positionList);
+        String str = positionColumnNamePrint();
         System.out.println(str);// column 이름 출력 포지션 + 팀 이름
 
         int teamCount = teamDao.getTeamCount();
@@ -109,7 +109,7 @@ public class PlayerService {
     }
 
 
-    private String positionColumnNamePrint(List<PositionResponseDto> list) throws SQLException {
+    private String positionColumnNamePrint() throws SQLException {
 
         int teamCount = teamDao.getTeamCount();
         String str = "포지션" + " \t\t";

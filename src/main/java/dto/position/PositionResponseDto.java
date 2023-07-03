@@ -32,7 +32,8 @@ public class PositionResponseDto {
         int rowCount = words.length;
         int flag = 0;
 
-        System.out.print(position + " \t\t");
+        System.out.print(position + " \t\t");// 포지션 출력
+
         for (int i = 1; i <= teamCount; i++) { // 팀개수 출력
             flag = 0;
             for (int j = 0; j < rowCount; j++) {
