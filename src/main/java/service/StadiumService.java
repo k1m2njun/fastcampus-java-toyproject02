@@ -20,11 +20,14 @@ public class StadiumService {
         try {
             String requestName = requestData.split("=")[1];
 
+            if(requestName.trim().length() == 0) throw  new CustomException("야구장 이름을 공백(space)으로 설정할 수 없습니다.");
             if(stadiumDao.getStadiumByName(requestName) != null) throw new CustomException("이미 등록된 경기장입니다.");
 
             System.out.println(stadiumDao.createStadium(requestName).toString());
             System.out.println("성공");
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("경기장 이름을 넣지 않으셨습니다. ");
+        } catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
